@@ -4,19 +4,38 @@
     var rawData = null;
     
     var channels = {
-        collision: 0
+        collision: 1,
+        system: 0
     };
+    
     var inputs = {
-        collision: 0
+        collision: 1,
+        system: 0
+    };
+
+    var colorTable = {
+        'red': 1,
+        'bright red': 2, 
+        'yellow': 3, 
+        'green': 4, 
+        'bright blue': 5,
+        'blue': 6, 
+        'magenta': 7,
+        'white': 8,
+        'off' : 0
+    };
+    
+    var dirTable = {
+        'forward':1, 
+        'backward': 2, 
+        'left': 3, 
+        'right': 4
     };
 
     // Hats / triggers
     ext.whenCollision = function (which) {
         return getSensorDetected(which);
     };
-
-
-
 
     // Private logic
     function getSensorDetected(which) {
@@ -31,62 +50,55 @@
 
     ext.roll = function(angle, speed) {
         // Code that gets executed when the block is run
-        console.log('Rolling'+angle+speed);
+        console.log('Rolling angle:'+angle+' speed:'+speed);
+
+        var rollCmd = new Uint8Array(3);
+        rollCmd[0] = 2;
+        rollCmd[1] = angle;
+        rollCmd[2] = speed;
+        device.send(rollCmd.buffer);
         
     };
 
     ext.roll2 = function(dir, speed) {
         // Code that gets executed when the block is run
-        console.log('Rolling2'+dir+speed);
+        console.log('Rolling2 dir:'+dir+' speed:'+speed);
         
+        var roll2Cmd = new Uint8Array(3);
+        roll2Cmd[0] = 3;
+        roll2Cmd[1] = dirTable[dir];
+        roll2Cmd[2] = speed;
+        device.send(roll2Cmd.buffer);
     };
 
     ext.light = function(color) {
         // Code that gets executed when the block is run
-        console.log('LED Light'+color);
+        console.log('LED color:'+color);
         
+        var ledCmd = new Uint8Array(3);
+        ledCmd[0] = 3;
+        ledCmd[1] = colorTable[color];
+        ledCmd[2] = 0;  // TODO: mode
+        device.send(ledCmd.buffer);
     };
 
     var inputArray = [];
 
     function processData() {
         var bytes = new Uint8Array(rawData);
-
-        inputArray[15] = 0;
-
-        // TODO: make this robust against misaligned packets.
-        // Right now there's no guarantee that our 18 bytes start at the beginning of a message.
-        // Maybe we should treat the data as a stream of 2-byte packets instead of 18-byte packets.
-        // That way we could just check the high bit of each byte to verify that we're aligned.
-        for (var i = 0; i < 9; ++i) {
-            var hb = bytes[i * 2] & 127;
-            var channel = hb >> 3;
-            var lb = bytes[i * 2 + 1] & 127;
-            inputArray[channel] = ((hb & 7) << 7) + lb;
+        
+        for (var i = 0; i < 5; ++i) {   // 5 channels
+            var channel = bytes[i*2];            // channel number
+            inputArray[channel] = bytes[i*2+1];  // status codes
         }
 
-        if (watchdog && (inputArray[15] == 0x04)) {
-            // Seems to be a valid PicoBoard.
+        if (watchdog) {
             clearTimeout(watchdog);
             watchdog = null;
         }
 
         for (var name in inputs) {
             var v = inputArray[channels[name]];
-            if (name == 'light') {
-                v = (v < 25) ? 100 - v : Math.round((1023 - v) * (75 / 998));
-            }
-            else if (name == 'sound') {
-                //empirically tested noise sensor floor
-                v = Math.max(0, v - 18);
-                v = (v < 50) ? v / 2 :
-                    //noise ceiling
-                25 + Math.min(75, Math.round((v - 50) * (75 / 580)));
-            }
-            else {
-                v = (100 * v) / 1023;
-            }
-
             inputs[name] = v;
         }
 
@@ -117,7 +129,7 @@
         device = potentialDevices.shift();
 
         if (device) {
-            device.open({stopBits: 0, bitRate: 38400, ctsFlowControl: 0}, deviceOpened);
+            device.open({stopBits: 0, bitRate: 115200, ctsFlowControl: 0}, deviceOpened);
         }
     }
 
@@ -132,25 +144,25 @@
         }
         device.set_receive_handler(function (data) {
             console.log('Received: ' + data.byteLength);
-            if (!rawData || rawData.byteLength == 18) {
+            if (!rawData || rawData.byteLength == 10) {
                 rawData = new Uint8Array(data);
             } else {
                 rawData = appendBuffer(rawData, data);
             }
 
-            if (rawData.byteLength >= 18) {
+            if (rawData.byteLength >= 10) {
                 //console.log(rawData);
                 processData();
                 //device.send(pingCmd.buffer);
             }
         });
 
-        // Tell the PicoBoard to send a input data every 50ms
+        // Tell the SPRK to send a input data every 100ms
         var pingCmd = new Uint8Array(1);
         pingCmd[0] = 1;
         poller = setInterval(function () {
             device.send(pingCmd.buffer);
-        }, 50);
+        }, 100);
         watchdog = setTimeout(function () {
             // This device didn't get good data in time, so give up on it. Clean up and then move on.
             // If we get good data then we'll terminate this watchdog.
@@ -160,7 +172,7 @@
             device.close();
             device = null;
             tryNextDevice();
-        }, 250);
+        }, 1000);
     }
 
     ext._deviceRemoved = function (dev) {
