@@ -150,9 +150,9 @@
     };
 
     ext._getStatus = function () {
-        if(!device) return {status: 1, msg: 'SPRK UART disconnected'};
-        if(watchdog) return {status: 1, msg: 'Probing for SPRK UART'};
-        return {status: 2, msg: 'SPRK UART connected'};
+        if(!device) return {status: 1, msg: 'SPRK disconnected'};
+        if(watchdog) return {status: 1, msg: 'Probing for SPRK'};
+        return {status: 2, msg: 'SPRK connected'};
     };
 
 
@@ -172,6 +172,6 @@
     };
 
     // Register the extension
-    ScratchExtensions.register('SPRK UART', descriptor, ext, {type: 'serial'});
-    //ScratchExtensions.register('PicoBoard', descriptor, ext, {type: 'serial'});
+    ScratchExtensions.register('SPRK', descriptor, ext, {type: 'serial'});
+
 })({});
