@@ -1,7 +1,33 @@
 (function(ext) {
-	  var collision = false; 
-	
+    var collision = false; 
+    var device = null;
+    var rawData = null;
+    
+    var channels = {
+        collision: 0
+    };
+    var inputs = {
+        collision: 0
+    };
 
+    // Hats / triggers
+    ext.whenCollision = function (which) {
+        return getSensorDetected(which);
+    };
+
+
+
+
+    // Private logic
+    function getSensorDetected(which) {
+        if (device == null) return false;
+        if (which == 'collision') return true;
+        return false;
+    }
+
+    function getSensor(which) {
+        return inputs[which];
+    }
 
     ext.roll = function(angle, speed) {
         // Code that gets executed when the block is run
