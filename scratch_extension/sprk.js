@@ -144,8 +144,8 @@
     };
 
     ext._shutdown = function () {
-        if (device) device.close();
         if (poller) poller = clearInterval(poller);
+        if (device) device.close();
         device = null;
     };
 
