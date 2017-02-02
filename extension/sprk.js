@@ -169,7 +169,7 @@
             direction: ['forward', 'backward', 'left', 'right'],
             light: ['red', 'bright red', 'yellow', 'green', 'bright blue', 'blue', 'magenta','white','off']
         },
-        url: 'http://hreclove.github.io/scratch_extension'
+        url: 'http://hreclove.github.io/extension'
     };
 
     // Register the extension
