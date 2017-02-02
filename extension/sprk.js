@@ -52,19 +52,19 @@
         // Code that gets executed when the block is run
         console.log('Rolling angle:'+angle+' speed:'+speed);
 
-				if(!device) return;
-				
-				var rollCmd = new Uint8Array(3);
-				rollCmd[0] = 2;
-				rollCmd[1] = angle;
-				rollCmd[2] = speed;
-				device.send(rollCmd.buffer);
+        if(!device) return;
+        
+        var rollCmd = new Uint8Array(3);
+        rollCmd[0] = 2;
+        rollCmd[1] = angle;
+        rollCmd[2] = speed;
+        device.send(rollCmd.buffer);
 
     };
 
     ext.rolld = function(dir, speed) {
         // Code that gets executed when the block is run
-        console.log('Rolling2 dir:'+dir+' speed:'+speed);
+        console.log('Rolling2 dir:'+dir+'='+dirTable[dir]+' speed:'+speed);
         
         if(!device) return;
         
@@ -77,7 +77,7 @@
 
     ext.light = function(color) {
         // Code that gets executed when the block is run
-        console.log('LED color:'+color);
+        console.log('LED color:'+color+'='+colorTable[color]);
 
         if(!device) return;
                 
