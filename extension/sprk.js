@@ -189,7 +189,7 @@
             ['w', 'Roll with angle %n speed %n', 'roll', '0', '0'],
             ['w', 'Roll %m.direction speed %n', 'roll2', 'forward', '0'],
             ['w', 'LED %m.light', 'light', 'red', '0'],
-            ['h', 'when collision detected', 'when_collision']
+            ['h', 'when collision detected', 'whenCollision', 'collision']
         ],
         menus: {
             direction: ['forward', 'backward', 'left', 'right'],
