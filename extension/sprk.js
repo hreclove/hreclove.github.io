@@ -52,29 +52,35 @@
         // Code that gets executed when the block is run
         console.log('Rolling angle:'+angle+' speed:'+speed);
 
-        var rollCmd = new Uint8Array(3);
-        rollCmd[0] = 2;
-        rollCmd[1] = angle;
-        rollCmd[2] = speed;
-        device.send(rollCmd.buffer);
-        
+				if(!device) return;
+				
+				var rollCmd = new Uint8Array(3);
+				rollCmd[0] = 2;
+				rollCmd[1] = angle;
+				rollCmd[2] = speed;
+				device.send(rollCmd.buffer);
+
     };
 
-    ext.roll2 = function(dir, speed) {
+    ext.rolld = function(dir, speed) {
         // Code that gets executed when the block is run
         console.log('Rolling2 dir:'+dir+' speed:'+speed);
         
-        var roll2Cmd = new Uint8Array(3);
-        roll2Cmd[0] = 3;
-        roll2Cmd[1] = dirTable[dir];
-        roll2Cmd[2] = speed;
-        device.send(roll2Cmd.buffer);
+        if(!device) return;
+        
+        var rolldCmd = new Uint8Array(3);
+        rolldCmd[0] = 3;
+        rolldCmd[1] = dirTable[dir];
+        rolldCmd[2] = speed;
+        device.send(rolldCmd.buffer);
     };
 
     ext.light = function(color) {
         // Code that gets executed when the block is run
         console.log('LED color:'+color);
-        
+
+        if(!device) return;
+                
         var ledCmd = new Uint8Array(3);
         ledCmd[0] = 3;
         ledCmd[1] = colorTable[color];
@@ -199,7 +205,7 @@
         blocks: [
             // Block type, block name, function name
             ['w', 'Roll with angle %n speed %n', 'roll', '0', '0'],
-            ['w', 'Roll %m.direction speed %n', 'roll2', 'forward', '0'],
+            ['w', 'Roll %m.direction speed %n', 'rolld', 'forward', '0'],
             ['w', 'LED %m.light', 'light', 'red', '0'],
             ['h', 'when collision detected', 'whenCollision', 'collision']
         ],
