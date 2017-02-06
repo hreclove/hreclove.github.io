@@ -252,7 +252,7 @@
     };
 
     var blocks = {
-    	      // [ Type, String, Callback, Default menu values ]
+            // [ Type, String, Callback, Default menu values ]
             // Types: 
             // ' ' 	Synchronous command
             // 'w' 	Asynchronous command
@@ -260,30 +260,30 @@
             // 'R' 	Asynchronous reporter
             // 'h' 	Hat block (synchronous, returns boolean, true = run stack)
             en: [
-	            [' ', 'Roll with %n degrees, speed %n', 'roll', '0', '50'],
-	            [' ', 'Roll to %m.direction , speed %n', 'rollDir', 'forward'],
-	            [' ', 'Roll Stop','rollStop'],
-	            [' ', 'set LED to %m.lightColor', 'light', 'red'],
-	            [' ', 'set LED with Red:%n Green:%n Blue:%n', 'lightRGB', '255', '0', '0'],
-	            ['h', 'when Collision detected', 'whenSensorDetected']
+              [' ', 'Roll with %n degrees, speed %n', 'roll', '0', '50'],
+              [' ', 'Roll to %m.direction , speed %n', 'rollDir', 'forward'],
+              [' ', 'Roll Stop','rollStop'],
+              [' ', 'set LED to %m.lightColor', 'light', 'red'],
+              [' ', 'set LED with Red:%n Green:%n Blue:%n', 'lightRGB', '255', '0', '0'],
+              ['h', 'when Collision detected', 'whenSensorDetected']
             ],
             ko: [
-	            [' ', '이동 %n도 방향, 속도 %n', 'roll', '0', '50'],
-	            [' ', '이동 %m.direction 속도 %n', 'rollDir', 'forward'],
-	            [' ', '정지','rollStop'],
-	            [' ', '램프색 바꾸기, %m.lightColor', 'light', 'red'],
-	            [' ', '램프색 조합하기, 빨강:%n 초록:%n 파랑:%n', 'lightRGB', '255', '0', '0'],
-	            ['h', '충돌하면', 'whenSensorDetected']
+              [' ', '이동 %n도 방향, 속도 %n', 'roll', '0', '50'],
+              [' ', '이동 %m.direction 속도 %n', 'rollDir', 'forward'],
+              [' ', '정지','rollStop'],
+              [' ', '램프색 바꾸기, %m.lightColor', 'light', 'red'],
+              [' ', '램프색 조합하기, 빨강:%n 초록:%n 파랑:%n', 'lightRGB', '255', '0', '0'],
+              ['h', '충돌하면', 'whenSensorDetected']
             ]
     };
 
     var menus = {
-    	    en: {
+          en: {
             direction: ['forward', 'backward', 'left', 'right'],
             lightColor: ['red', 'bright red', 'yellow', 'green', 'bright blue', 'blue', 'magenta','white','off']
           },
           ko: {
-          	direction: ['앞으로', '뒤로', '왼쪽', '오른쪽'],
+            direction: ['앞으로', '뒤로', '왼쪽', '오른쪽'],
             lightColor: ['빨강', '주황', '노랑', '초록', '하늘', '파랑', '보라','흰','끄기']
           }
     };
