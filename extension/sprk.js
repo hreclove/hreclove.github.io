@@ -1,4 +1,4 @@
-(function(ext) {
+﻿(function(ext) {
     var extDevice = null;
     var rawData = null;
     
@@ -59,7 +59,7 @@
 
     ext.rollDir = function(dir, speed) {
         // Code that gets executed when the block is run
-        console.log('Rolling2 dir:'+dir+' speed:'+speed);
+        console.log('Rolling dir:'+dir+' speed:'+speed);
         
         //if(!extDevice) return;
                
@@ -251,6 +251,16 @@
         return {status: 2, msg: 'SPRK connected'};
     };
 
+    // Check for GET param 'lang'
+    var paramString = window.location.search.replace(/^\?|\/$/g, '');
+    var vars = paramString.split("&");
+    var lang = 'en';
+    for (var i=0; i<vars.length; i++) {
+    var pair = vars[i].split('=');
+      if (pair.length > 1 && pair[0]=='lang')
+        lang = pair[1];
+    }
+    
     var blocks = {
             // [ Type, String, Callback, Default menu values ]
             // Types: 
@@ -269,9 +279,9 @@
             ],
             ko: [
               [' ', '이동 %n도 방향, 속도 %n', 'roll', '0', '50'],
-              [' ', '이동 %m.direction 속도 %n', 'rollDir', 'forward'],
+              [' ', '이동 %m.direction 속도 %n', 'rollDir', '앞으로'],
               [' ', '정지','rollStop'],
-              [' ', '램프색 바꾸기, %m.lightColor', 'light', 'red'],
+              [' ', '램프색 바꾸기, %m.lightColor', 'light', '빨강'],
               [' ', '램프색 조합하기, 빨강:%n 초록:%n 파랑:%n', 'lightRGB', '255', '0', '0'],
               ['h', '충돌하면', 'whenSensorDetected']
             ]
@@ -287,16 +297,6 @@
             lightColor: ['빨강', '주황', '노랑', '초록', '하늘', '파랑', '보라', '흰', '끄기']
           }
     };
-
-    // Check for GET param 'lang'
-    var paramString = window.location.search.replace(/^\?|\/$/g, '');
-    var vars = paramString.split("&");
-    var lang = 'en';
-    for (var i=0; i<vars.length; i++) {
-    var pair = vars[i].split('=');
-      if (pair.length > 1 && pair[0]=='lang')
-        lang = pair[1];
-    }
   
     // Block and block menu descriptions
     var descriptor = {
