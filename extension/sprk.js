@@ -1,18 +1,18 @@
 (function(ext) {
-    var collision = false; 
-    var device = null;
+    var extDevice = null;
     var rawData = null;
     
+    var HeaderStart = 0x3C;
+    var HeaderEnd = 0x3D;
+    var CollisionSensorID = 0x40;
+    var MoveCmdID = 1;
+    var LedCmdID = 2;
+    
     var channels = {
-        collision: 1,
+        sensor: 1,
         system: 0
     };
     
-    var inputs = {
-        collision: 1,
-        system: 0
-    };
-
     var colorTable = {
         'red': 1,
         'bright red': 2, 
@@ -32,83 +32,134 @@
         'right': 4
     };
 
-    // Hats / triggers
-    ext.whenCollision = function (which) {
-        return getSensorDetected(which);
-    };
-
-    // Private logic
-    function getSensorDetected(which) {
-        if (device == null) return false;
-        if (which == 'collision') return true;
+    // Collision Sensor detected
+    ext.whenSensorDetected = function () {
+        if (extDevice == null) return false;
+        if (inputSensor[0] == CollisionSensorID) return true;
         return false;
-    }
-
-    function getSensor(which) {
-        return inputs[which];
-    }
-
+    };
+   
     ext.roll = function(angle, speed) {
         // Code that gets executed when the block is run
         console.log('Rolling angle:'+angle+' speed:'+speed);
 
-        if(!device) return;
+        if(!extDevice) return;
         
-        var rollCmd = new Uint8Array(3);
-        rollCmd[0] = 2;
-        rollCmd[1] = angle;
-        rollCmd[2] = speed;
-        device.send(rollCmd.buffer);
+        var rollCmd = initCmdBuffer(MoveCmdID);  // MOVE command
+        
+        rollCmd[2] = 0; // roll mode
+        rollCmd[3] = getByte_High(angle);
+        rollCmd[4] = getByte_Low(angle);
+        rollCmd[5] = getByte_High(speed);
+        rollCmd[6] = getByte_Low(speed);
+
+        extDevice.send(rollCmd.buffer);
 
     };
 
-    ext.rolld = function(dir, speed) {
+    ext.rollDir = function(dir, speed) {
         // Code that gets executed when the block is run
         console.log('Rolling2 dir:'+dir+'='+dirTable[dir]+' speed:'+speed);
         
-        if(!device) return;
+        if(!extDevice) return;
+               
+        if(dir == 'forward') roll(0,speed);
+        else if(dir == 'backward') roll(180,speed);
+        else if(dir == 'left') roll(270,speed);
+        else if(dir == 'right') roll(90,speed);
+    };
+    
+    ext.rollStop = function() {
+        // Code that gets executed when the block is run
+        console.log('rollStop');
         
-        var rolldCmd = new Uint8Array(3);
-        rolldCmd[0] = 3;
-        rolldCmd[1] = dirTable[dir];
-        rolldCmd[2] = speed;
-        device.send(rolldCmd.buffer);
+        if(!extDevice) return;
+        
+        roll(0,0);
     };
 
     ext.light = function(color) {
         // Code that gets executed when the block is run
         console.log('LED color:'+color+'='+colorTable[color]);
 
-        if(!device) return;
-                
-        var ledCmd = new Uint8Array(3);
-        ledCmd[0] = 3;
-        ledCmd[1] = colorTable[color];
-        ledCmd[2] = 0;  // TODO: mode
-        device.send(ledCmd.buffer);
+        if(!extDevice) return;
+                      
+        if(color == 'red') {lightRGB(255,0,0);}
+        else if(color == 'bright red') {lightRGB(255,128,0);}
+        else if(color == 'yellow') {lightRGB(255,255,0);}
+        else if(color == 'green') {lightRGB(0,255,0);}
+        else if(color == 'bright blue') {lightRGB(0,128,255);}	
+        else if(color == 'blue') {lightRGB(0,0,255);}
+        else if(color == 'magenta') {lightRGB(255,0,255);}	
+        else if(color == 'white') {lightRGB(255,255,255);}
+        else if(color == 'off') {lightRGB(0,0,0);}
     };
 
-    var inputArray = [];
+    ext.lightRGB = function(vRed,vGreen,vBlue) {
+        // Code that gets executed when the block is run
+        console.log('LED R:'+vRed+' G:'+vGreen+' B:'+vBlue);
+
+        if(!extDevice) return;
+                      
+        var ledRGBCmd = initCmdBuffer(LedCmdID); // LED command
+        
+        if(vRed>255) vRed=255;
+        if(vGreen>255) vGreen=255;
+        if(vBlue>255) vBlue=255;
+        
+        ledRGBCmd[2] = 0; // which lamp
+        ledRGBCmd[3] = vRed;
+        ledRGBCmd[4] = vGreen;
+        ledRGBCmd[5] = vBlue;
+        ledRGBCmd[6] = 0; // backlight
+
+        extDevice.send(ledRGBCmd.buffer);
+    };
+
+    function initCmdBuffer(cmdType) {
+    	var tmp = new Uint8Array(8);
+    	tmp[0] = HeaderStart;
+    	tmp[1] = cmdType;
+    	tmp[7] = HeaderEnd;
+    	for (var i = 2;i < 7;i++) {
+    		tmp[i] = 0;
+    	}
+    	return tmp.buffer;
+    }
+
+    function getByte_High(vBits16) {
+    	return ((vBits16 >> 8) & 0xFF);
+    }
+    
+    function getByte_Low(vBits16) {
+    	return (vBits16 & 0xFF);
+    }
+
+		var inputSystem = [];
+    var inputSensor = [];
 
     function processData() {
         var bytes = new Uint8Array(rawData);
         
-        for (var i = 0; i < 5; ++i) {   // 5 channels
-            var channel = bytes[i*2];            // channel number
-            inputArray[channel] = bytes[i*2+1];  // status codes
+        var channel = bytes[1];
+        if(channel == channels['system']) {
+        	for (var i = 1; i < 7; i++) {
+        		console.log('inputSystem='+bytes[i].toString(16));
+            inputSystem[i-1] = bytes[i];  // received data without Header < >
+        	}
+        } 
+        else if(channel == channels['sensor']) {
+        	for (var i = 1; i < 7; i++) {
+        		console.log('inputSensor='+bytes[i].toString(16));
+            inputSensor[i-1] = bytes[i];  // received data without Header < >
+        	}
         }
 
         if (watchdog) {
             clearTimeout(watchdog);
             watchdog = null;
         }
-
-        for (var name in inputs) {
-            var v = inputArray[channels[name]];
-            inputs[name] = v;
-        }
-
-        console.log(inputs);
+        
         rawData = null;
     }
 
@@ -124,7 +175,7 @@
     ext._deviceConnected = function (dev) {
         potentialDevices.push(dev);
 
-        if (!device) {
+        if (!extDevice) {
             tryNextDevice();
         }
     };
@@ -132,10 +183,10 @@
     function tryNextDevice() {
         // If potentialDevices is empty, device will be undefined.
         // That will get us back here next time a device is connected.
-        device = potentialDevices.shift();
+        extDevice = potentialDevices.shift();
 
-        if (device) {
-            device.open({stopBits: 0, bitRate: 115200, ctsFlowControl: 0}, deviceOpened);
+        if (extDevice) {
+            extDevice.open({stopBits: 0, bitRate: 115200, ctsFlowControl: 0}, deviceOpened);
         }
     }
 
@@ -148,53 +199,54 @@
             tryNextDevice();
             return;
         }
-        device.set_receive_handler(function (data) {
+        extDevice.set_receive_handler(function (data) {
             console.log('Received: ' + data.byteLength);
-            if (!rawData || rawData.byteLength == 10) {
+            if (!rawData || rawData.byteLength == 8) {
                 rawData = new Uint8Array(data);
             } else {
                 rawData = appendBuffer(rawData, data);
             }
 
-            if (rawData.byteLength >= 10) {
+            if (rawData.byteLength >= 8) {
                 //console.log(rawData);
                 processData();
-                //device.send(pingCmd.buffer);
+                //extDevice.send(pingCmd.buffer);
             }
         });
 
         // Tell the SPRK to send a input data every 100ms
-        var pingCmd = new Uint8Array(1);
-        pingCmd[0] = 1;
+        var pingCmd = new Uint8Array(2);
+        pingCmd[0] = HeaderStart;
+        pingCmd[1] = HeaderEnd;
         poller = setInterval(function () {
-            device.send(pingCmd.buffer);
+            extDevice.send(pingCmd.buffer);
         }, 100);
         watchdog = setTimeout(function () {
             // This device didn't get good data in time, so give up on it. Clean up and then move on.
             // If we get good data then we'll terminate this watchdog.
             clearInterval(poller);
             poller = null;
-            device.set_receive_handler(null);
-            device.close();
-            device = null;
+            extDevice.set_receive_handler(null);
+            extDevice.close();
+            extDevice = null;
             tryNextDevice();
         }, 1000);
     }
 
     ext._deviceRemoved = function (dev) {
-        if (device != dev) return;
+        if (extDevice != dev) return;
         if (poller) poller = clearInterval(poller);
-        device = null;
+        extDevice = null;
     };
 
     ext._shutdown = function () {
         if (poller) poller = clearInterval(poller);
-        if (device) device.close();
-        device = null;
+        if (extDevice) extDevice.close();
+        extDevice = null;
     };
 
     ext._getStatus = function () {
-        if(!device) return {status: 1, msg: 'SPRK disconnected'};
+        if(!extDevice) return {status: 1, msg: 'SPRK disconnected'};
         if(watchdog) return {status: 1, msg: 'Probing for SPRK'};
         return {status: 2, msg: 'SPRK connected'};
     };
@@ -203,15 +255,39 @@
     // Block and block menu descriptions
     var descriptor = {
         blocks: [
-            // Block type, block name, function name
-            ['w', 'Roll with angle %n speed %n', 'roll', '0', '0'],
-            ['w', 'Roll %m.direction speed %n', 'rolld', 'forward', '0'],
-            ['w', 'LED %m.light', 'light', 'red', '0'],
-            ['h', 'when collision detected', 'whenCollision', 'collision']
+            // [ Type, String, Callback, Default menu values ]
+            // Types: 
+            // ' ' 	Synchronous command
+            // 'w' 	Asynchronous command
+            // 'r' 	Synchronous reporter
+            // 'R' 	Asynchronous reporter
+            // 'h' 	Hat block (synchronous, returns boolean, true = run stack)
+            en: [
+            [' ', 'Roll with angle %n, speed %n', 'roll', '0', '50'],
+            [' ', 'Roll %m.direction speed %n', 'rollDir', 'forward'],
+            [' ', 'Roll Stop','rollStop'],
+            [' ', 'LED %m.lightColor', 'light', 'red'],
+            [' ', 'LED Red:%n Green:%n Blue:%n', 'lightRGB', '255', '0', '0'],
+            ['h', 'when Collision detected', 'whenSensorDetected']
+            ],
+            ko: [
+            [' ', '이동 %n도 방향, 속도 %n', 'roll', '0', '50'],
+            [' ', '이동 %m.direction 속도 %n', 'rollDir', 'forward'],
+            [' ', '정지','rollStop'],
+            [' ', '램프색 변경, %m.lightColor', 'light', 'red'],
+            [' ', '램프색 조합, 빨강:%n 초록:%n 파랑:%n', 'lightRGB', '255', '0', '0'],
+            ['h', '충돌하면', 'whenSensorDetected']
+            ],
         ],
         menus: {
+        	en: {
             direction: ['forward', 'backward', 'left', 'right'],
-            light: ['red', 'bright red', 'yellow', 'green', 'bright blue', 'blue', 'magenta','white','off']
+            lightColor: ['red', 'bright red', 'yellow', 'green', 'bright blue', 'blue', 'magenta','white','off']
+          },
+          ko: {
+          	direction: ['앞으로', '뒤로', '왼쪽', '오른쪽'],
+            lightColor: ['빨강', '주황', '노랑', '초록', '하늘', '파랑', '보라','흰','끄기']
+          }
         },
         url: 'http://hreclove.github.io/extension'
     };
