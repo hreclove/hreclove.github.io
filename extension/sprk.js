@@ -61,7 +61,7 @@
         // Code that gets executed when the block is run
         console.log('Rolling2 dir:'+dir+' speed:'+speed);
         
-        if(!extDevice) return;
+        //if(!extDevice) return;
                
         if(dir == menus[lang]['direction']['forward']) roll(0,speed);
         else if(dir == menus[lang]['direction']['backward']) roll(180,speed);
@@ -73,7 +73,7 @@
         // Code that gets executed when the block is run
         console.log('rollStop');
         
-        if(!extDevice) return;
+        //if(!extDevice) return;
         
         roll(0,0);
     };
@@ -82,17 +82,17 @@
         // Code that gets executed when the block is run
         console.log('LED color:'+color);
 
-        if(!extDevice) return;
+        //if(!extDevice) return;
                       
         if(color == menus[lang]['lightColor']['red']) {lightRGB(255,0,0);}
-        else if(color == menus[lang]['lightColor']'bright red']) {lightRGB(255,128,0);}
-        else if(color == menus[lang]['lightColor']'yellow']) {lightRGB(255,255,0);}
-        else if(color == menus[lang]['lightColor']'green']) {lightRGB(0,255,0);}
-        else if(color == menus[lang]['lightColor']'bright blue']) {lightRGB(0,128,255);}	
-        else if(color == menus[lang]['lightColor']'blue']) {lightRGB(0,0,255);}
-        else if(color == menus[lang]['lightColor']'magenta']) {lightRGB(255,0,255);}	
-        else if(color == menus[lang]['lightColor']'white']) {lightRGB(255,255,255);}
-        else if(color == menus[lang]['lightColor']'off']) {lightRGB(0,0,0);}
+        else if(color == menus[lang]['lightColor']['bright red']) {lightRGB(255,128,0);}
+        else if(color == menus[lang]['lightColor']['yellow']) {lightRGB(255,255,0);}
+        else if(color == menus[lang]['lightColor']['green']) {lightRGB(0,255,0);}
+        else if(color == menus[lang]['lightColor']['bright blue']) {lightRGB(0,128,255);}	
+        else if(color == menus[lang]['lightColor']['blue']) {lightRGB(0,0,255);}
+        else if(color == menus[lang]['lightColor']['magenta']) {lightRGB(255,0,255);}	
+        else if(color == menus[lang]['lightColor']['white']) {lightRGB(255,255,255);}
+        else if(color == menus[lang]['lightColor']['off']) {lightRGB(0,0,0);}
     };
 
     ext.lightRGB = function(vRed,vGreen,vBlue) {
