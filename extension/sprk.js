@@ -284,19 +284,19 @@
           },
           ko: {
             direction: ['앞으로', '뒤로', '왼쪽', '오른쪽'],
-            lightColor: ['빨강', '주황', '노랑', '초록', '하늘', '파랑', '보라','흰','끄기']
+            lightColor: ['빨강', '주황', '노랑', '초록', '하늘', '파랑', '보라', '흰', '끄기']
           }
     };
 
-  // Check for GET param 'lang'
-  var paramString = window.location.search.replace(/^\?|\/$/g, '');
-  var vars = paramString.split("&");
-  var lang = 'en';
-  for (var i=0; i<vars.length; i++) {
+    // Check for GET param 'lang'
+    var paramString = window.location.search.replace(/^\?|\/$/g, '');
+    var vars = paramString.split("&");
+    var lang = 'en';
+    for (var i=0; i<vars.length; i++) {
     var pair = vars[i].split('=');
-    if (pair.length > 1 && pair[0]=='lang')
-      lang = pair[1];
-  }
+      if (pair.length > 1 && pair[0]=='lang')
+        lang = pair[1];
+    }
   
     // Block and block menu descriptions
     var descriptor = {
