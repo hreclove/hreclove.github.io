@@ -12,6 +12,25 @@
         sensor: 1,
         system: 0
     };
+    
+    var colorTable = {
+        'red': 0,
+        'bright red': 1, 
+        'yellow': 2, 
+        'green': 3, 
+        'bright blue': 4,
+        'blue': 5, 
+        'magenta': 6,
+        'white': 7,
+        'off' : 8
+    };
+    
+    var dirTable = {
+        'forward':0, 
+        'backward': 1, 
+        'left': 2, 
+        'right': 3
+    };
 
     // Collision Sensor detected
     ext.whenSensorDetected = function () {
@@ -44,10 +63,10 @@
         
         //if(!extDevice) return;
         
-        if(dir == menus[lang]['direction'][0]) ext.roll(0,speed);
-        else if(dir == menus[lang]['direction'][1]) ext.roll(180,speed);
-        else if(dir == menus[lang]['direction'][2]) ext.roll(270,speed);
-        else if(dir == menus[lang]['direction'][3]) ext.roll(90,speed);
+        if(dir == menus[lang]['direction'][dirTable['forward']]) ext.roll(0,speed);
+        else if(dir == menus[lang]['direction'][dirTable['backward']]) ext.roll(180,speed);
+        else if(dir == menus[lang]['direction'][dirTable['left']]) ext.roll(270,speed);
+        else if(dir == menus[lang]['direction'][dirTable['right']]) ext.roll(90,speed);
     };
     
     ext.rollStop = function() {
@@ -65,15 +84,15 @@
 
         //if(!extDevice) return;
                       
-        if(color == menus[lang]['lightColor'][0]) { ext.lightRGB(255,0,0);}
-        else if(color == menus[lang]['lightColor'][1]) {ext.lightRGB(255,128,0);}
-        else if(color == menus[lang]['lightColor'][2]) {ext.lightRGB(255,255,0);}
-        else if(color == menus[lang]['lightColor'][3]) {ext.lightRGB(0,255,0);}
-        else if(color == menus[lang]['lightColor'][4]) {ext.lightRGB(0,128,255);}	
-        else if(color == menus[lang]['lightColor'][5]) {ext.lightRGB(0,0,255);}
-        else if(color == menus[lang]['lightColor'][6]) {ext.lightRGB(255,0,255);}	
-        else if(color == menus[lang]['lightColor'][7]) {ext.lightRGB(255,255,255);}
-        else if(color == menus[lang]['lightColor'][8]) {ext.lightRGB(0,0,0);}
+        if(color == menus[lang]['lightColor'][colorTable['red']]) {ext.lightRGB(255,0,0);}
+        else if(color == menus[lang]['lightColor'][colorTable['bright red']]) {ext.lightRGB(255,128,0);}
+        else if(color == menus[lang]['lightColor'][colorTable['yellow']]) {ext.lightRGB(255,255,0);}
+        else if(color == menus[lang]['lightColor'][colorTable['green']]) {ext.lightRGB(0,255,0);}
+        else if(color == menus[lang]['lightColor'][colorTable['bright blue']]) {ext.lightRGB(0,128,255);}	
+        else if(color == menus[lang]['lightColor'][colorTable['blue']]) {ext.lightRGB(0,0,255);}
+        else if(color == menus[lang]['lightColor'][colorTable['magenta']]) {ext.lightRGB(255,0,255);}	
+        else if(color == menus[lang]['lightColor'][colorTable['white']]) {ext.lightRGB(255,255,255);}
+        else if(color == menus[lang]['lightColor'][colorTable['off']]) {ext.lightRGB(0,0,0);}
     };
 
     ext.lightRGB = function(vRed,vGreen,vBlue) {
