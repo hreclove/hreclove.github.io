@@ -59,14 +59,14 @@
 
     ext.rollDir = function(dir, speed) {
         // Code that gets executed when the block is run
-        console.log('Rolling2 dir:'+dir+'='+dirTable[dir]+' speed:'+speed);
+        console.log('Rolling2 dir:'+dir+' speed:'+speed);
         
         if(!extDevice) return;
                
-        if(dir == 'forward') roll(0,speed);
-        else if(dir == 'backward') roll(180,speed);
-        else if(dir == 'left') roll(270,speed);
-        else if(dir == 'right') roll(90,speed);
+        if(dir == menus[lang]['direction']['forward']) roll(0,speed);
+        else if(dir == menus[lang]['direction']['backward']) roll(180,speed);
+        else if(dir == menus[lang]['direction']['left']) roll(270,speed);
+        else if(dir == menus[lang]['direction']['right']) roll(90,speed);
     };
     
     ext.rollStop = function() {
@@ -80,19 +80,19 @@
 
     ext.light = function(color) {
         // Code that gets executed when the block is run
-        console.log('LED color:'+color+'='+colorTable[color]);
+        console.log('LED color:'+color);
 
         if(!extDevice) return;
                       
-        if(color == 'red') {lightRGB(255,0,0);}
-        else if(color == 'bright red') {lightRGB(255,128,0);}
-        else if(color == 'yellow') {lightRGB(255,255,0);}
-        else if(color == 'green') {lightRGB(0,255,0);}
-        else if(color == 'bright blue') {lightRGB(0,128,255);}	
-        else if(color == 'blue') {lightRGB(0,0,255);}
-        else if(color == 'magenta') {lightRGB(255,0,255);}	
-        else if(color == 'white') {lightRGB(255,255,255);}
-        else if(color == 'off') {lightRGB(0,0,0);}
+        if(color == menus[lang]['lightColor']['red']) {lightRGB(255,0,0);}
+        else if(color == menus[lang]['lightColor']'bright red']) {lightRGB(255,128,0);}
+        else if(color == menus[lang]['lightColor']'yellow']) {lightRGB(255,255,0);}
+        else if(color == menus[lang]['lightColor']'green']) {lightRGB(0,255,0);}
+        else if(color == menus[lang]['lightColor']'bright blue']) {lightRGB(0,128,255);}	
+        else if(color == menus[lang]['lightColor']'blue']) {lightRGB(0,0,255);}
+        else if(color == menus[lang]['lightColor']'magenta']) {lightRGB(255,0,255);}	
+        else if(color == menus[lang]['lightColor']'white']) {lightRGB(255,255,255);}
+        else if(color == menus[lang]['lightColor']'off']) {lightRGB(0,0,0);}
     };
 
     ext.lightRGB = function(vRed,vGreen,vBlue) {
@@ -251,11 +251,8 @@
         return {status: 2, msg: 'SPRK connected'};
     };
 
-
-    // Block and block menu descriptions
-    var descriptor = {
-        blocks: [
-            // [ Type, String, Callback, Default menu values ]
+    var blocks = {
+    	      // [ Type, String, Callback, Default menu values ]
             // Types: 
             // ' ' 	Synchronous command
             // 'w' 	Asynchronous command
@@ -278,9 +275,10 @@
 	            [' ', '·¥ÇÁ»ö Á¶ÇÕÇÏ±â, »¡°­:%n ÃÊ·Ï:%n ÆÄ¶û:%n', 'lightRGB', '255', '0', '0'],
 	            ['h', 'Ãæµ¹ÇÏ¸é', 'whenSensorDetected']
             ]
-        ],
-        menus: {
-        	en: {
+    };
+
+    var menus = {
+    	    en: {
             direction: ['forward', 'backward', 'left', 'right'],
             lightColor: ['red', 'bright red', 'yellow', 'green', 'bright blue', 'blue', 'magenta','white','off']
           },
@@ -288,7 +286,22 @@
           	direction: ['¾ÕÀ¸·Î', 'µÚ·Î', '¿ÞÂÊ', '¿À¸¥ÂÊ'],
             lightColor: ['»¡°­', 'ÁÖÈ²', '³ë¶û', 'ÃÊ·Ï', 'ÇÏ´Ã', 'ÆÄ¶û', 'º¸¶ó','Èò','²ô±â']
           }
-        },
+    };
+
+  // Check for GET param 'lang'
+  var paramString = window.location.search.replace(/^\?|\/$/g, '');
+  var vars = paramString.split("&");
+  var lang = 'en';
+  for (var i=0; i<vars.length; i++) {
+    var pair = vars[i].split('=');
+    if (pair.length > 1 && pair[0]=='lang')
+      lang = pair[1];
+  }
+  
+    // Block and block menu descriptions
+    var descriptor = {
+        blocks: blocks[lang],
+        menus: menus[lang],
         url: 'http://hreclove.github.io/extension'
     };
 
