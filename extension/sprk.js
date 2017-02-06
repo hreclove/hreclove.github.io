@@ -63,10 +63,10 @@
         
         //if(!extDevice) return;
                
-        if(dir == menus[lang]['direction'][dirTable['forward']]) roll(0,speed);
-        else if(dir == menus[lang]['direction'][dirTable['backward']]) roll(180,speed);
-        else if(dir == menus[lang]['direction'][dirTable['left']]) roll(270,speed);
-        else if(dir == menus[lang]['direction'][dirTable['right']]) roll(90,speed);
+        if(dir == menus[lang]['direction'][0]) roll(0,speed);
+        else if(dir == menus[lang]['direction'][1]) roll(180,speed);
+        else if(dir == menus[lang]['direction'][2]) roll(270,speed);
+        else if(dir == menus[lang]['direction'][3]) roll(90,speed);
     };
     
     ext.rollStop = function() {
