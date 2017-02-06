@@ -14,22 +14,22 @@
     };
     
     var colorTable = {
-        'red': 1,
-        'bright red': 2, 
-        'yellow': 3, 
-        'green': 4, 
-        'bright blue': 5,
-        'blue': 6, 
-        'magenta': 7,
-        'white': 8,
-        'off' : 0
+        'red': 0,
+        'bright red': 1, 
+        'yellow': 2, 
+        'green': 3, 
+        'bright blue': 4,
+        'blue': 5, 
+        'magenta': 6,
+        'white': 7,
+        'off' : 8
     };
     
     var dirTable = {
-        'forward':1, 
-        'backward': 2, 
-        'left': 3, 
-        'right': 4
+        'forward':0, 
+        'backward': 1, 
+        'left': 2, 
+        'right': 3
     };
 
     // Collision Sensor detected
