@@ -268,12 +268,12 @@
 	            ['h', 'when Collision detected', 'whenSensorDetected']
             ],
             ko: [
-	            [' ', 'ÀÌµ¿ %nµµ ¹æÇâ, ¼Óµµ %n', 'roll', '0', '50'],
-	            [' ', 'ÀÌµ¿ %m.direction ¼Óµµ %n', 'rollDir', 'forward'],
-	            [' ', 'Á¤Áö','rollStop'],
-	            [' ', '·¥ÇÁ»ö ¹Ù²Ù±â, %m.lightColor', 'light', 'red'],
-	            [' ', '·¥ÇÁ»ö Á¶ÇÕÇÏ±â, »¡°­:%n ÃÊ·Ï:%n ÆÄ¶û:%n', 'lightRGB', '255', '0', '0'],
-	            ['h', 'Ãæµ¹ÇÏ¸é', 'whenSensorDetected']
+	            [' ', 'ì´ë™ %në„ ë°©í–¥, ì†ë„ %n', 'roll', '0', '50'],
+	            [' ', 'ì´ë™ %m.direction ì†ë„ %n', 'rollDir', 'forward'],
+	            [' ', 'ì •ì§€','rollStop'],
+	            [' ', 'ë¨í”„ìƒ‰ ë°”ê¾¸ê¸°, %m.lightColor', 'light', 'red'],
+	            [' ', 'ë¨í”„ìƒ‰ ì¡°í•©í•˜ê¸°, ë¹¨ê°•:%n ì´ˆë¡:%n íŒŒë‘:%n', 'lightRGB', '255', '0', '0'],
+	            ['h', 'ì¶©ëŒí•˜ë©´', 'whenSensorDetected']
             ]
     };
 
@@ -283,8 +283,8 @@
             lightColor: ['red', 'bright red', 'yellow', 'green', 'bright blue', 'blue', 'magenta','white','off']
           },
           ko: {
-          	direction: ['¾ÕÀ¸·Î', 'µÚ·Î', '¿ŞÂÊ', '¿À¸¥ÂÊ'],
-            lightColor: ['»¡°­', 'ÁÖÈ²', '³ë¶û', 'ÃÊ·Ï', 'ÇÏ´Ã', 'ÆÄ¶û', 'º¸¶ó','Èò','²ô±â']
+          	direction: ['ì•ìœ¼ë¡œ', 'ë’¤ë¡œ', 'ì™¼ìª½', 'ì˜¤ë¥¸ìª½'],
+            lightColor: ['ë¹¨ê°•', 'ì£¼í™©', 'ë…¸ë‘', 'ì´ˆë¡', 'í•˜ëŠ˜', 'íŒŒë‘', 'ë³´ë¼','í°','ë„ê¸°']
           }
     };
 
