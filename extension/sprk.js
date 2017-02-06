@@ -1,4 +1,4 @@
-﻿(function(ext) {
+(function(ext) {
     var extDevice = null;
     var rawData = null;
     
@@ -63,10 +63,10 @@
         
         //if(!extDevice) return;
                
-        if(dir == menus[lang]['direction']['forward']) roll(0,speed);
-        else if(dir == menus[lang]['direction']['backward']) roll(180,speed);
-        else if(dir == menus[lang]['direction']['left']) roll(270,speed);
-        else if(dir == menus[lang]['direction']['right']) roll(90,speed);
+        if(dir == menus[lang]['direction'][dirTable['forward']]) roll(0,speed);
+        else if(dir == menus[lang]['direction'][dirTable['backward']]) roll(180,speed);
+        else if(dir == menus[lang]['direction'][dirTable['left']]) roll(270,speed);
+        else if(dir == menus[lang]['direction'][dirTable['right']]) roll(90,speed);
     };
     
     ext.rollStop = function() {
@@ -84,15 +84,15 @@
 
         //if(!extDevice) return;
                       
-        if(color == menus[lang]['lightColor']['red']) {lightRGB(255,0,0);}
-        else if(color == menus[lang]['lightColor']['bright red']) {lightRGB(255,128,0);}
-        else if(color == menus[lang]['lightColor']['yellow']) {lightRGB(255,255,0);}
-        else if(color == menus[lang]['lightColor']['green']) {lightRGB(0,255,0);}
-        else if(color == menus[lang]['lightColor']['bright blue']) {lightRGB(0,128,255);}	
-        else if(color == menus[lang]['lightColor']['blue']) {lightRGB(0,0,255);}
-        else if(color == menus[lang]['lightColor']['magenta']) {lightRGB(255,0,255);}	
-        else if(color == menus[lang]['lightColor']['white']) {lightRGB(255,255,255);}
-        else if(color == menus[lang]['lightColor']['off']) {lightRGB(0,0,0);}
+        if(color == menus[lang]['lightColor'][colorTable['red']]) {lightRGB(255,0,0);}
+        else if(color == menus[lang]['lightColor'][colorTable['bright red']]) {lightRGB(255,128,0);}
+        else if(color == menus[lang]['lightColor'][colorTable['yellow']]) {lightRGB(255,255,0);}
+        else if(color == menus[lang]['lightColor'][colorTable['green']]) {lightRGB(0,255,0);}
+        else if(color == menus[lang]['lightColor'][colorTable['bright blue']]) {lightRGB(0,128,255);}	
+        else if(color == menus[lang]['lightColor'][colorTable['blue']]) {lightRGB(0,0,255);}
+        else if(color == menus[lang]['lightColor'][colorTable['magenta']]) {lightRGB(255,0,255);}	
+        else if(color == menus[lang]['lightColor'][colorTable['white']]) {lightRGB(255,255,255);}
+        else if(color == menus[lang]['lightColor'][colorTable['off']]) {lightRGB(0,0,0);}
     };
 
     ext.lightRGB = function(vRed,vGreen,vBlue) {
