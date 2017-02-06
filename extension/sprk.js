@@ -62,7 +62,8 @@
         console.log('Rolling dir:'+dir+' speed:'+speed);
         
         //if(!extDevice) return;
-               
+        consol.log(menus[lang]['direction'][0]);
+        
         if(dir == menus[lang]['direction'][0]) roll(0,speed);
         else if(dir == menus[lang]['direction'][1]) roll(180,speed);
         else if(dir == menus[lang]['direction'][2]) roll(270,speed);
