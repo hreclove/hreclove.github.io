@@ -177,7 +177,7 @@
 
         if (watchdog) {
             clearTimeout(watchdog);
-            watchdog = null;
+            //watchdog = null;
         }
         
         rawData = null;
