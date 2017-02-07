@@ -311,14 +311,14 @@
               [' ', 'Aming, rotating %n degrees', 'aming', '10']
             ],
             ko: [
-              [' ', '이동 %n도 방향, 속도 %n', 'roll', '0', '50'],
+              [' ', '이동 %n 도 방향, 속도 %n', 'roll', '0', '50'],
               [' ', '이동 %m.direction 속도 %n', 'rollDir', '앞으로'],
               [' ', '정지','rollStop'],
               [' ', '램프색 바꾸기, %m.lightColor', 'light', '빨강'],
               [' ', '램프색 조합하기, 빨강:%n 초록:%n 파랑:%n', 'lightRGB', '255', '0', '0'],
               ['h', '충돌하면', 'whenSensorDetected'],
               ['-'],
-              [' ', '정면맞추기, %n도 회전', 'aming', '10']
+              [' ', '정면맞추기, %n 도 회전', 'aming', '10']
             ]
     };
 
