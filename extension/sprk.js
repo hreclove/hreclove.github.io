@@ -206,7 +206,7 @@
         extDevice = potentialDevices.shift();
 
         if (extDevice) {
-            extDevice.open({stopBits: 0, bitRate: 115200, ctsFlowControl: 0}, deviceOpened);
+            extDevice.open({bitRate: 115200, dataBits: 8, stopBits: 0, parityBit:0, ctsFlowControl: 0}, deviceOpened);
         }
     }
 
