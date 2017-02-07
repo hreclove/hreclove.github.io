@@ -7,8 +7,9 @@
     var CollisionSensorID = 0x40;
    
     var SysCmdID = 0;
-    var MoveCmdID = 1;
+    var RollCmdID = 1;
     var LedCmdID = 2;
+    var AimCmdID = 3;
     
     var channels = {
         sensor: 1,
@@ -49,7 +50,7 @@
 
         if(!extDevice) return;
         
-        initCmdBuffer(MoveCmdID);  // MOVE command
+        initCmdBuffer(RollCmdID);  // Roll command
         
         TxCmdBuffer[2] = 0; // roll mode
         TxCmdBuffer[3] = getByte_High(angle);
@@ -127,9 +128,9 @@
         if(!extDevice) return;
         
         
-        initCmdBuffer(SysCmdID); // System command
+        initCmdBuffer(AimCmdID); // System command
         
-        TxCmdBuffer[2] = 0x10; // Aming
+        TxCmdBuffer[2] = 0; // 
         TxCmdBuffer[3] = getByte_High(angle);
         TxCmdBuffer[4] = getByte_Low(angle);
         TxCmdBuffer[5] = 0;
