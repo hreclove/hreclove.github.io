@@ -3,10 +3,13 @@
     var rawData = null;
     
     var HeaderStart = 0x3C;
-    var HeaderEnd = 0x3D;
+    var HeaderEnd = 0x3E;
     var CollisionSensorID = 0x40;
+   
+    var SysCmdID = 0;
     var MoveCmdID = 1;
     var LedCmdID = 2;
+    var PingCmdID = 0x81;
     
     var channels = {
         sensor: 1,
@@ -116,6 +119,26 @@
         extDevice.send(ledRGBCmd.buffer);
     };
 
+    ext.aming = function(angle) {
+        // Code that gets executed when the block is run
+        console.log('Aming, rotate:'+angle);
+
+        if(!extDevice) return;
+        
+        if(angle > 359) angle=359;
+        if(angle < -359) angle=-359;
+        
+        var AmingCmd = initCmdBuffer(SysCmdID); // System command
+        
+        AmingCmd[2] = 0x10; // Aming
+        AmingCmd[3] = getByte_High(angle);
+        AmingCmd[4] = getByte_Low(angle);
+        AmingCmd[5] = 0;
+        AmingCmd[6] = 0;
+
+        extDevice.send(AmingCmd.buffer);
+    };
+
     function initCmdBuffer(cmdType) {
     	var tmp = new Uint8Array(8);
     	tmp[0] = HeaderStart;
@@ -135,7 +158,7 @@
     	return (vBits16 & 0xFF);
     }
 
-		var inputSystem = [];
+    var inputSystem = [];
     var inputSensor = [];
 
     function processData() {
@@ -214,13 +237,8 @@
             }
         });
 
-        // Tell the SPRK to send a input data every 100ms
-        var pingCmd = new Uint8Array(2);
-        pingCmd[0] = HeaderStart;
-        pingCmd[1] = HeaderEnd;
-        poller = setInterval(function () {
-            extDevice.send(pingCmd.buffer);
-        }, 100);
+        sendPing();
+        
         watchdog = setTimeout(function () {
             // This device didn't get good data in time, so give up on it. Clean up and then move on.
             // If we get good data then we'll terminate this watchdog.
@@ -231,6 +249,19 @@
             extDevice = null;
             tryNextDevice();
         }, 1000);
+    }
+
+    function sendPing() {
+        // Tell the SPRK to send a input data every 100ms
+        if(poller == null) return;
+        
+        var pingCmd = new Uint8Array(3);
+        pingCmd[0] = HeaderStart;
+        pingCmd[1] = PingCmdID;
+        pingCmd[2] = HeaderEnd;
+        poller = setInterval(function () {
+            extDevice.send(pingCmd.buffer);
+        }, 100);
     }
 
     ext._deviceRemoved = function (dev) {
@@ -276,6 +307,8 @@
               [' ', 'set LED to %m.lightColor', 'light', 'red'],
               [' ', 'set LED with Red:%n Green:%n Blue:%n', 'lightRGB', '255', '0', '0'],
               ['h', 'when Collision detected', 'whenSensorDetected']
+              ['-'],
+              [' ', 'Aming, rotating %n degrees', 'aming', '10']
             ],
             ko: [
               [' ', '이동 %n도 방향, 속도 %n', 'roll', '0', '50'],
@@ -284,6 +317,8 @@
               [' ', '램프색 바꾸기, %m.lightColor', 'light', '빨강'],
               [' ', '램프색 조합하기, 빨강:%n 초록:%n 파랑:%n', 'lightRGB', '255', '0', '0'],
               ['h', '충돌하면', 'whenSensorDetected']
+              ['-'],
+              [' ', '정면맞추기, %n도 회전', 'aming', '10']
             ]
     };
 
