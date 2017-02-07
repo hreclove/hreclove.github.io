@@ -124,8 +124,6 @@
 
         if(!extDevice) return;
         
-        if(angle > 359) angle=359;
-        if(angle < -359) angle=-359;
         
         var AmingCmd = initCmdBuffer(SysCmdID); // System command
         
@@ -306,7 +304,7 @@
               [' ', 'set LED with Red:%n Green:%n Blue:%n', 'lightRGB', '255', '0', '0'],
               ['h', 'when Collision detected', 'whenSensorDetected'],
               ['-'],
-              [' ', 'Aming, rotating %n degrees', 'aming', '10']
+              [' ', 'Aming, rotating %m.amingAngle degrees', 'aming', '10']
             ],
             ko: [
               [' ', '이동 %n 도 방향, 속도 %n', 'roll', '0', '50'],
@@ -316,18 +314,20 @@
               [' ', '램프색 조합하기, 빨강:%n 초록:%n 파랑:%n', 'lightRGB', '255', '0', '0'],
               ['h', '충돌하면', 'whenSensorDetected'],
               ['-'],
-              [' ', '정면맞추기, %n 도 회전', 'aming', '10']
+              [' ', '정면맞추기, %m.amingAngle 도 회전', 'aming', '10']
             ]
     };
 
     var menus = {
           en: {
             direction: ['forward', 'backward', 'left', 'right'],
-            lightColor: ['red', 'bright red', 'yellow', 'green', 'bright blue', 'blue', 'magenta','white','off']
+            lightColor: ['red', 'bright red', 'yellow', 'green', 'bright blue', 'blue', 'magenta','white','off'],
+            amingAngle: ['5','10','15','30','45']
           },
           ko: {
             direction: ['앞으로', '뒤로', '왼쪽', '오른쪽'],
-            lightColor: ['빨강', '주황', '노랑', '초록', '하늘', '파랑', '보라', '흰', '끄기']
+            lightColor: ['빨강', '주황', '노랑', '초록', '하늘', '파랑', '보라', '흰', '끄기'],
+            amingAngle: ['5','10','15','30','45']
           }
     };
   
