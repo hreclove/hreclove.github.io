@@ -9,7 +9,6 @@
     var SysCmdID = 0;
     var MoveCmdID = 1;
     var LedCmdID = 2;
-    var PingCmdID = 0x81;
     
     var channels = {
         sensor: 1,
@@ -237,7 +236,7 @@
             }
         });
 
-        sendPing();
+        sendStartPing();
         
         watchdog = setTimeout(function () {
             // This device didn't get good data in time, so give up on it. Clean up and then move on.
@@ -251,14 +250,13 @@
         }, 1000);
     }
 
-    function sendPing() {
+    function sendStartPing() {
         // Tell the SPRK to send a input data every 100ms
         if(poller == null) return;
         
-        var pingCmd = new Uint8Array(3);
+        var pingCmd = new Uint8Array(2);
         pingCmd[0] = HeaderStart;
-        pingCmd[1] = PingCmdID;
-        pingCmd[2] = HeaderEnd;
+        pingCmd[1] = HeaderEnd;
         poller = setInterval(function () {
             extDevice.send(pingCmd.buffer);
         }, 100);
