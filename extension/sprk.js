@@ -34,6 +34,8 @@
         'right': 3
     };
 
+    var TxCmdBuffer = new Uint8Array(8);
+    
     // Collision Sensor detected
     ext.whenSensorDetected = function () {
         if (extDevice == null) return false;
@@ -47,15 +49,15 @@
 
         if(!extDevice) return;
         
-        var rollCmd = initCmdBuffer(MoveCmdID);  // MOVE command
+        initCmdBuffer(MoveCmdID);  // MOVE command
         
-        rollCmd[2] = 0; // roll mode
-        rollCmd[3] = getByte_High(angle);
-        rollCmd[4] = getByte_Low(angle);
-        rollCmd[5] = getByte_High(speed);
-        rollCmd[6] = getByte_Low(speed);
+        TxCmdBuffer[2] = 0; // roll mode
+        TxCmdBuffer[3] = getByte_High(angle);
+        TxCmdBuffer[4] = getByte_Low(angle);
+        TxCmdBuffer[5] = getByte_High(speed);
+        TxCmdBuffer[6] = getByte_Low(speed);
 
-        extDevice.send(rollCmd.buffer);
+        extDevice.send(TxCmdBuffer.buffer);
 
     };
 
@@ -103,19 +105,19 @@
 
         if(!extDevice) return;
                       
-        var ledRGBCmd = initCmdBuffer(LedCmdID); // LED command
+        initCmdBuffer(LedCmdID); // LED command
         
         if(vRed>255) vRed=255;
         if(vGreen>255) vGreen=255;
         if(vBlue>255) vBlue=255;
         
-        ledRGBCmd[2] = 0; // which lamp
-        ledRGBCmd[3] = vRed;
-        ledRGBCmd[4] = vGreen;
-        ledRGBCmd[5] = vBlue;
-        ledRGBCmd[6] = 0; // backlight
+        TxCmdBuffer[2] = 0; // which lamp
+        TxCmdBuffer[3] = vRed;
+        TxCmdBuffer[4] = vGreen;
+        TxCmdBuffer[5] = vBlue;
+        TxCmdBuffer[6] = 0; // backlight
 
-        extDevice.send(ledRGBCmd.buffer);
+        extDevice.send(TxCmdBuffer.buffer);
     };
 
     ext.aming = function(angle) {
@@ -125,26 +127,24 @@
         if(!extDevice) return;
         
         
-        var AmingCmd = initCmdBuffer(SysCmdID); // System command
+        initCmdBuffer(SysCmdID); // System command
         
-        AmingCmd[2] = 0x10; // Aming
-        AmingCmd[3] = getByte_High(angle);
-        AmingCmd[4] = getByte_Low(angle);
-        AmingCmd[5] = 0;
-        AmingCmd[6] = 0;
+        TxCmdBuffer[2] = 0x10; // Aming
+        TxCmdBuffer[3] = getByte_High(angle);
+        TxCmdBuffer[4] = getByte_Low(angle);
+        TxCmdBuffer[5] = 0;
+        TxCmdBuffer[6] = 0;
 
-        extDevice.send(AmingCmd.buffer);
+        extDevice.send(TxCmdBuffer.buffer);
     };
 
     function initCmdBuffer(cmdType) {
-    	var tmp = new Uint8Array(8);
-    	tmp[0] = HeaderStart;
-    	tmp[1] = cmdType;
-    	tmp[7] = HeaderEnd;
+    	TxCmdBuffer[0] = HeaderStart;
+    	TxCmdBuffer[1] = cmdType;
+    	TxCmdBuffer[7] = HeaderEnd;
     	for (var i = 2;i < 7;i++) {
-    		tmp[i] = 0;
+    		TxCmdBuffer[i] = 0;
     	}
-    	return tmp.buffer;
     }
 
     function getByte_High(vBits16) {
@@ -177,7 +177,7 @@
 
         if (watchdog) {
             clearTimeout(watchdog);
-            //watchdog = null;
+            watchdog = null;
         }
         
         rawData = null;
