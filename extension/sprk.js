@@ -249,9 +249,7 @@
     }
 
     function sendStartPing() {
-        // Tell the SPRK to send a input data every 100ms
-        if(poller == null) return;
-        
+        // Tell the SPRK to send a input data every 100ms       
         var pingCmd = new Uint8Array(2);
         pingCmd[0] = HeaderStart;
         pingCmd[1] = HeaderEnd;
