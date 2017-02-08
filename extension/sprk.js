@@ -11,6 +11,8 @@
     var LedCmdID = 2;
     var AimCmdID = 3;
     
+    var isOnline = 0;
+    
     var channels = {
         sensor: 1,
         system: 0
@@ -164,16 +166,23 @@
         
         var channel = bytes[1];
         if(channel == channels['system']) {
-        	for (var i = 1; i < 7; i++) {
-        		console.log('inputSystem='+bytes[i].toString(16));
-            inputSystem[i-1] = bytes[i];  // received data without Header < >
+        	for (var i = 2; i < 7; i++) {
+        		//console.log('inputSystem='+bytes[i].toString(16));
+            inputSystem[i-2] = bytes[i];  // received data without Header < >
         	}
         } 
         else if(channel == channels['sensor']) {
-        	for (var i = 1; i < 7; i++) {
-        		console.log('inputSensor='+bytes[i].toString(16));
-            inputSensor[i-1] = bytes[i];  // received data without Header < >
+        	for (var i = 2; i < 7; i++) {
+        		//console.log('inputSensor='+bytes[i].toString(16));
+            inputSensor[i-2] = bytes[i];  // received data without Header < >
         	}
+        }
+        
+        if(inputSystem[0] == 0x01) {
+        	isOnline = 0;
+        }
+        else if(inputSystem[0] == 0x02) {
+        	isOnLine = 1;
         }
 
         if (watchdog) {
@@ -229,7 +238,7 @@
             }
 
             if (rawData.byteLength >= 8) {
-                //console.log(rawData);
+                console.log(rawData);
                 processData();
                 //extDevice.send(pingCmd.buffer);
             }
@@ -245,6 +254,7 @@
             extDevice.set_receive_handler(null);
             extDevice.close();
             extDevice = null;
+            isOnline = 0;
             tryNextDevice();
         }, 1000);
     }
@@ -263,18 +273,21 @@
         if (extDevice != dev) return;
         if (poller) poller = clearInterval(poller);
         extDevice = null;
+        isOnline = 0;
     };
 
     ext._shutdown = function () {
         if (poller) poller = clearInterval(poller);
         if (extDevice) extDevice.close();
         extDevice = null;
+        isOnline = 0;
     };
 
     ext._getStatus = function () {
         if(!extDevice) return {status: 1, msg: 'SPRK disconnected'};
         if(watchdog) return {status: 1, msg: 'Probing for SPRK'};
-        return {status: 2, msg: 'SPRK connected'};
+        if(isOnline == 1) return {status: 2, msg: 'SPRK connected'};
+        return {status: 1, msg: 'Probing for SPRK'};
     };
 
     // Check for GET param 'lang'
