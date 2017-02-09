@@ -43,16 +43,17 @@
     
     // Collision Sensor detected
     ext.whenSensorDetected = function () {
-        if (extDevice == null) return false;
+        if (!extDevice || !extDeviceOnline) return false;
         if (inputSensor[0] == CollisionSensorID) return true;
         return false;
     };
    
     ext.roll = function(angle, speed) {
         // Code that gets executed when the block is run
-        console.log('Rolling angle:'+angle+' speed:'+speed);
 
-        if(!extDevice) return;
+        if(!extDevice || !extDeviceOnline) return;
+
+        console.log('Rolling angle:'+angle+' speed:'+speed);
         
         initCmdBuffer(RollCmdID);  // Roll command
         
@@ -68,9 +69,10 @@
 
     ext.rollDir = function(dir, speed) {
         // Code that gets executed when the block is run
+
+        if(!extDevice  || !extDeviceOnline) return;
+
         console.log('Rolling dir:'+dir+' speed:'+speed);
-        
-        //if(!extDevice) return;
         
         if(dir == menus[lang]['direction'][dirTable['forward']]) ext.roll(0,speed);
         else if(dir == menus[lang]['direction'][dirTable['backward']]) ext.roll(180,speed);
@@ -80,9 +82,10 @@
     
     ext.rollStop = function() {
         // Code that gets executed when the block is run
+
+        if(!extDevice  || !extDeviceOnline) return;
+
         console.log('rollStop');
-        
-        //if(!extDevice) return;
         
         ext.roll(0,0);
     };
@@ -90,10 +93,10 @@
 
     ext.aimingAngle = function(angle) {
         // Code that gets executed when the block is run
-        console.log('Aiming, angle:'+angle);
 
-        if(!extDevice) return;
-        
+        if(!extDevice  || !extDeviceOnline) return;
+
+        console.log('Aiming, angle:'+angle);
         
         initCmdBuffer(RollCmdID);  // Roll command
         
@@ -108,18 +111,20 @@
     
     ext.aimingStop = function() {
         // Code that gets executed when the block is run
-        console.log('Aiming Stop');
 
-        if(!extDevice) return;
+        if(!extDevice  || !extDeviceOnline) return;
+
+        console.log('Aiming Stop');
         
         ext.roll(0,0);
     }
 
     ext.headingAngle = function(angle) {
         // Code that gets executed when the block is run
-        console.log('Heading:'+angle);
 
-        if(!extDevice) return;
+        if(!extDevice  || !extDeviceOnline) return;
+
+        console.log('Heading:'+angle);
         
         initCmdBuffer(RollCmdID);  // Roll command
         
@@ -134,9 +139,11 @@
 
     ext.light = function(color) {
         // Code that gets executed when the block is run
+
+        if(!extDevice  || !extDeviceOnline) return;
+
         console.log('LED color:'+color);
 
-        //if(!extDevice) return;
                       
         if(color == menus[lang]['lightColor'][colorTable['red']]) {ext.lightRGB(255,0,0);}
         else if(color == menus[lang]['lightColor'][colorTable['bright red']]) {ext.lightRGB(255,128,0);}
@@ -151,9 +158,10 @@
 
     ext.lightRGB = function(vRed,vGreen,vBlue) {
         // Code that gets executed when the block is run
-        console.log('LED R:'+vRed+' G:'+vGreen+' B:'+vBlue);
 
-        if(!extDevice) return;
+        if(!extDevice  || !extDeviceOnline) return;
+
+        console.log('LED R:'+vRed+' G:'+vGreen+' B:'+vBlue);
                       
         initCmdBuffer(LedCmdID); // LED command
         
@@ -172,9 +180,10 @@
     
     ext.tailLamp = function(vBrightness) {
         // Code that gets executed when the block is run
-        console.log('tail Lamp : '+vBrightness);
 
-        if(!extDevice) return;
+        if(!extDevice  || !extDeviceOnline) return;
+
+        console.log('tail Lamp : '+vBrightness);
         
         initCmdBuffer(LedCmdID); // LED command
         
