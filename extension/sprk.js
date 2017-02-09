@@ -11,7 +11,7 @@
     var LedCmdID = 2;
     var AimCmdID = 3;
     
-    var isOnline = false;
+    var extDeviceOnline = false;
     
     var channels = {
         sensor: 1,
@@ -179,10 +179,10 @@
         }
         
         if(inputSystem[0] == 2) {
-        	isOnLine = true;
+        	extDeviceOnline = true;
         }
         else {
-        	isOnline = false;
+        	extDeviceOnline = false;
         }
 
         if (watchdog) {
@@ -254,7 +254,7 @@
             extDevice.set_receive_handler(null);
             extDevice.close();
             extDevice = null;
-            isOnline = false;
+            extDeviceOnline = false;
             tryNextDevice();
         }, 1000);
     }
@@ -273,20 +273,20 @@
         if (extDevice != dev) return;
         if (poller) poller = clearInterval(poller);
         extDevice = null;
-        isOnline = false;
+        extDeviceOnline = false;
     };
 
     ext._shutdown = function () {
         if (poller) poller = clearInterval(poller);
         if (extDevice) extDevice.close();
         extDevice = null;
-        isOnline = false;
+        extDeviceOnline = false;
     };
 
     ext._getStatus = function () {
         if(!extDevice) return {status: 1, msg: 'SPRK disconnected'};
         if(watchdog) return {status: 1, msg: 'Probing for SPRK'};
-        if(isOnline) return {status: 2, msg: 'SPRK connected'};
+        if(extDeviceOnline) return {status: 2, msg: 'SPRK connected'};
         return {status: 1, msg: 'Probing for SPRK'};
     };
 
