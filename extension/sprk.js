@@ -355,7 +355,7 @@
             // 'R' 	Asynchronous reporter
             // 'h' 	Hat block (synchronous, returns boolean, true = run stack)
             en: [
-              [' ', 'Roll with %n degrees, speed %n', 'roll', '0', '50'],
+              [' ', 'Roll to %n degrees, speed %n', 'roll', '0', '50'],
               [' ', 'Roll to %m.direction , speed %n', 'rollDir', 'forward'],
               [' ', 'Roll Stop','rollStop'],
               [' ', 'set Heading %n degrees', 'headingAngle', '0'],
@@ -364,7 +364,7 @@
               [' ', 'set Tail Lamp %n.taillight','tailLamp','255'],
               ['h', 'when Collision detected', 'whenSensorDetected'],
               ['-'],
-              [' ', 'Aiming, rotating %m.aimingAngle degrees', 'aimingAngle', '10'],
+              [' ', 'Aiming, rotate %m.aimingAngle degrees', 'aimingAngle', '10'],
               [' ', 'Aiming, End','aimingStop']
             ],
             ko: [
