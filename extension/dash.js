@@ -153,10 +153,10 @@
         
         var channel = bytes[1];
         if(channel == channels['system']) {
-        	for (var i = 2; i < 7; i++) {
-        		//console.log('inputSystem='+bytes[i].toString(16));
-            inputSystem[i-2] = bytes[i];  // received data without Header < >
-        	}
+            for (var i = 2; i < 7; i++) {
+                //console.log('inputSystem='+bytes[i].toString(16));
+                inputSystem[i-2] = bytes[i];  // received data without Header < >
+            }
         } 
         else if(channel == channels['sensor']) {
         	for (var i = 2; i < 7; i++) {
@@ -167,6 +167,7 @@
         
         if(inputSystem[0] == 2) {
         	extDeviceOnline = true;
+        	stopPing();
         }
         else {
         	extDeviceOnline = false;
@@ -236,7 +237,7 @@
         watchdog = setTimeout(function () {
             // This device didn't get good data in time, so give up on it. Clean up and then move on.
             // If we get good data then we'll terminate this watchdog.
-            clearInterval(poller);
+            if(poller) clearInterval(poller);
             poller = null;
             extDevice.set_receive_handler(null);
             extDevice.close();
@@ -255,16 +256,24 @@
             extDevice.send(pingCmd.buffer);
         }, 500);
     }
+    
+    function stopPing() {
+        // Stop send PING
+        if (poller) poller = clearInterval(poller);
+        poller = null;
+    }
 
     ext._deviceRemoved = function (dev) {
         if (extDevice != dev) return;
         if (poller) poller = clearInterval(poller);
+        poller = null;
         extDevice = null;
         extDeviceOnline = false;
     };
 
     ext._shutdown = function () {
         if (poller) poller = clearInterval(poller);
+        poller = null;
         if (extDevice) extDevice.close();
         extDevice = null;
         extDeviceOnline = false;
