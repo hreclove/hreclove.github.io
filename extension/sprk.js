@@ -268,9 +268,13 @@
         // If potentialDevices is empty, device will be undefined.
         // That will get us back here next time a device is connected.
         extDevice = potentialDevices.shift();
-
+        try{
         if (extDevice) {
             extDevice.open({stopBits: 0, bitRate: 38400, ctsFlowControl: 0}, deviceOpened);
+        }
+        } 
+        catch(err) {
+            console.log('Device Open Error');
         }
     }
 
