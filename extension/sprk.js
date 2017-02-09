@@ -266,7 +266,7 @@
         pingCmd[1] = HeaderEnd;
         poller = setInterval(function () {
             extDevice.send(pingCmd.buffer);
-        }, 100);
+        }, 500);
     }
 
     ext._deviceRemoved = function (dev) {
