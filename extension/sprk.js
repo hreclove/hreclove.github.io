@@ -88,7 +88,7 @@
     };
 
 
-    ext.aiming = function(angle) {
+    ext.aimingAngle = function(angle) {
         // Code that gets executed when the block is run
         console.log('Aiming, angle:'+angle);
 
@@ -115,7 +115,7 @@
         ext.roll(0,0);
     }
 
-    ext.heading = function(angle) {
+    ext.headingAngle = function(angle) {
         // Code that gets executed when the block is run
         console.log('Heading:'+angle);
 
@@ -358,26 +358,26 @@
               [' ', 'Roll with %n degrees, speed %n', 'roll', '0', '50'],
               [' ', 'Roll to %m.direction , speed %n', 'rollDir', 'forward'],
               [' ', 'Roll Stop','rollStop'],
-              [' ', 'set Heading %n degrees', 'heading', '0'],
+              [' ', 'set Heading %n degrees', 'headingAngle', '0'],
               [' ', 'set Color to %m.lightColor', 'light', 'red'],
               [' ', 'set Color with Red:%n Green:%n Blue:%n', 'lightRGB', '255', '0', '0'],
               [' ', 'set Tail Lamp %n.taillight','tailLamp','255'],
               ['h', 'when Collision detected', 'whenSensorDetected'],
               ['-'],
-              [' ', 'Aiming, rotating %m.aimingAngle degrees', 'aiming', '10'],
+              [' ', 'Aiming, rotating %m.aimingAngle degrees', 'aimingAngle', '10'],
               [' ', 'Aiming, End','aimingStop']
             ],
             ko: [
               [' ', '이동 %n 도 방향, 속도 %n', 'roll', '0', '50'],
               [' ', '이동 %m.direction 속도 %n', 'rollDir', '앞으로'],
               [' ', '이동 정지','rollStop'],
-              [' ', '머리 방향, %n 도', 'heading', '0'],
+              [' ', '머리 방향, %n 도', 'headingAngle', '0'],
               [' ', '색 바꾸기, %m.lightColor', 'light', '빨강'],
               [' ', '색 바꾸기, 빨강:%n 초록:%n 파랑:%n', 'lightRGB', '255', '0', '0'],
               [' ', '조준 조명 %n','tailLamp','255'],
               ['h', '충돌하면', 'whenSensorDetected'],
               ['-'],
-              [' ', '정면맞추기, %m.aimingAngle 도 회전', 'aiming', '10'],
+              [' ', '정면맞추기, %m.aimingAngle 도 회전', 'aimingAngle', '10'],
               [' ', '정면맞추기, 완료','aimingStop']
             ]
     };
