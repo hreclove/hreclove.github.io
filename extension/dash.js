@@ -290,7 +290,7 @@
             // 'R' 	Asynchronous reporter
             // 'h' 	Hat block (synchronous, returns boolean, true = run stack)
             en: [
-              [' ', 'Roll with %n degrees, speed %n', 'roll', '0', '50'],
+              [' ', 'Roll to %n degrees, speed %n', 'roll', '0', '50'],
               [' ', 'Roll to %m.direction , speed %n', 'rollDir', 'forward'],
               [' ', 'Roll Stop','rollStop'],
               [' ', 'set Color to %m.lightColor', 'light', 'red'],
