@@ -260,7 +260,7 @@
     }
 
     function sendStartPing() {
-        // Tell the SPRK to send a input data every 100ms       
+        // Tell the DASH to send a input data every 100ms       
         var pingCmd = new Uint8Array(2);
         pingCmd[0] = HeaderStart;
         pingCmd[1] = HeaderEnd;
@@ -284,10 +284,10 @@
     };
 
     ext._getStatus = function () {
-        if(!extDevice) return {status: 1, msg: 'SPRK disconnected'};
-        if(watchdog) return {status: 1, msg: 'Probing for SPRK'};
-        if(isOnline == 1) return {status: 2, msg: 'SPRK connected'};
-        return {status: 1, msg: 'Probing for SPRK'};
+        if(!extDevice) return {status: 1, msg: 'DASH disconnected'};
+        if(watchdog) return {status: 1, msg: 'Probing for DASH'};
+        if(isOnline == 1) return {status: 2, msg: 'DASH connected'};
+        return {status: 1, msg: 'Probing for DASH'};
     };
 
     // Check for GET param 'lang'
@@ -347,10 +347,10 @@
     var descriptor = {
         blocks: blocks[lang],
         menus: menus[lang],
-        url: 'http://hreclove.github.io/extension/sprk/'
+        url: 'http://hreclove.github.io/extension/dash/'
     };
 
     // Register the extension
-    ScratchExtensions.register('SPRK', descriptor, ext, {type: 'serial'});
+    ScratchExtensions.register('DASH', descriptor, ext, {type: 'serial'});
 
 })({});
