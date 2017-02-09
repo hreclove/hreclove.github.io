@@ -310,17 +310,17 @@
             extDevice = null;
             extDeviceOnline = false;
             tryNextDevice();
-        }, 1000);
+        }, 3000);
     }
 
     function sendStartPing() {
-        // Tell the SPRK to send a input data every 100ms       
+        // Tell the SPRK to send a input data every 1000ms       
         var pingCmd = new Uint8Array(2);
         pingCmd[0] = HeaderStart;
         pingCmd[1] = HeaderEnd;
         poller = setInterval(function () {
             extDevice.send(pingCmd.buffer);
-        }, 500);
+        }, 1000);
     }
     
     function stopPing() {
