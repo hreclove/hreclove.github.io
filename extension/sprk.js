@@ -178,11 +178,11 @@
         	}
         }
         
-        if(inputSystem[0] == 0x01) {
-        	isOnline = 0;
-        }
-        else if(inputSystem[0] == 0x02) {
+				if(inputSystem[0] == 2) {
         	isOnLine = 1;
+        }
+        else {
+        	isOnline = 0;
         }
 
         if (watchdog) {
