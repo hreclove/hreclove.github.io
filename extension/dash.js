@@ -9,7 +9,6 @@
     var SysCmdID = 0;
     var RollCmdID = 1;
     var LedCmdID = 2;
-    var AimCmdID = 3;
     
     var extDeviceOnline = false;
     
@@ -119,24 +118,6 @@
         TxCmdBuffer[4] = vGreen;
         TxCmdBuffer[5] = vBlue;
         TxCmdBuffer[6] = 0; // backlight
-
-        extDevice.send(TxCmdBuffer.buffer);
-    };
-
-    ext.aming = function(angle) {
-        // Code that gets executed when the block is run
-        console.log('Aming, rotate:'+angle);
-
-        if(!extDevice) return;
-        
-        
-        initCmdBuffer(AimCmdID); // System command
-        
-        TxCmdBuffer[2] = 0; // 
-        TxCmdBuffer[3] = getByte_High(angle);
-        TxCmdBuffer[4] = getByte_Low(angle);
-        TxCmdBuffer[5] = 0;
-        TxCmdBuffer[6] = 0;
 
         extDevice.send(TxCmdBuffer.buffer);
     };
@@ -312,34 +293,30 @@
               [' ', 'Roll with %n degrees, speed %n', 'roll', '0', '50'],
               [' ', 'Roll to %m.direction , speed %n', 'rollDir', 'forward'],
               [' ', 'Roll Stop','rollStop'],
-              [' ', 'set LED to %m.lightColor', 'light', 'red'],
-              [' ', 'set LED with Red:%n Green:%n Blue:%n', 'lightRGB', '255', '0', '0'],
+              [' ', 'set Color to %m.lightColor', 'light', 'red'],
+              [' ', 'set Color with Red:%n Green:%n Blue:%n', 'lightRGB', '255', '0', '0'],
               ['h', 'when Collision detected', 'whenSensorDetected'],
-              ['-'],
-              [' ', 'Aming, rotating %m.amingAngle degrees', 'aming', '10']
+              ['-']
             ],
             ko: [
               [' ', '이동 %n 도 방향, 속도 %n', 'roll', '0', '50'],
               [' ', '이동 %m.direction 속도 %n', 'rollDir', '앞으로'],
-              [' ', '정지','rollStop'],
-              [' ', '램프색 바꾸기, %m.lightColor', 'light', '빨강'],
-              [' ', '램프색 조합하기, 빨강:%n 초록:%n 파랑:%n', 'lightRGB', '255', '0', '0'],
+              [' ', '이동 정지','rollStop'],
+              [' ', '색 바꾸기, %m.lightColor', 'light', '빨강'],
+              [' ', '색 바꾸기, 빨강:%n 초록:%n 파랑:%n', 'lightRGB', '255', '0', '0'],
               ['h', '충돌하면', 'whenSensorDetected'],
-              ['-'],
-              [' ', '정면맞추기, %m.amingAngle 도 회전', 'aming', '10']
+              ['-']
             ]
     };
 
     var menus = {
           en: {
             direction: ['forward', 'backward', 'left', 'right'],
-            lightColor: ['red', 'bright red', 'yellow', 'green', 'bright blue', 'blue', 'magenta','white','off'],
-            amingAngle: ['5','10','15','30','45']
+            lightColor: ['red', 'bright red', 'yellow', 'green', 'bright blue', 'blue', 'magenta','white','off']
           },
           ko: {
             direction: ['앞으로', '뒤로', '왼쪽', '오른쪽'],
-            lightColor: ['빨강', '주황', '노랑', '초록', '하늘', '파랑', '보라', '흰', '끄기'],
-            amingAngle: ['5','10','15','30','45']
+            lightColor: ['빨강', '주황', '노랑', '초록', '하늘', '파랑', '보라', '흰', '끄기']
           }
     };
   

@@ -5,11 +5,13 @@
     var HeaderStart = 0x3C;
     var HeaderEnd = 0x3E;
     var CollisionSensorID = 0x40;
+    var TailLampID = 0x01; // for LED
+    var AimingModeID = 0x01; // for ROLL
+    var HeadingModeID = 0x02;   // for ROLL
    
     var SysCmdID = 0;
     var RollCmdID = 1;
     var LedCmdID = 2;
-    var AimCmdID = 3;
     
     var extDeviceOnline = false;
     
@@ -85,6 +87,51 @@
         ext.roll(0,0);
     };
 
+
+    ext.aiming = function(angle) {
+        // Code that gets executed when the block is run
+        console.log('Aiming, angle:'+angle);
+
+        if(!extDevice) return;
+        
+        
+        initCmdBuffer(RollCmdID);  // Roll command
+        
+        TxCmdBuffer[2] = AimingModeID; // Aiming mode
+        TxCmdBuffer[3] = getByte_High(angle);
+        TxCmdBuffer[4] = getByte_Low(angle);
+        TxCmdBuffer[5] = 0;
+        TxCmdBuffer[6] = 0;
+
+        extDevice.send(TxCmdBuffer.buffer);
+    };
+    
+    ext.aimingStop = function() {
+        // Code that gets executed when the block is run
+        console.log('Aiming Stop');
+
+        if(!extDevice) return;
+        
+        ext.roll(0,0);
+    }
+
+    ext.heading = function(angle) {
+        // Code that gets executed when the block is run
+        console.log('Heading:'+anagle);
+
+        if(!extDevice) return;
+        
+        initCmdBuffer(RollCmdID);  // Roll command
+        
+        TxCmdBuffer[2] = HeadingModeID; // heading mode
+        TxCmdBuffer[3] = getByte_High(angle);
+        TxCmdBuffer[4] = getByte_Low(angle);
+        TxCmdBuffer[5] = 0;
+        TxCmdBuffer[6] = 0;
+
+        extDevice.send(TxCmdBuffer.buffer);
+    };
+
     ext.light = function(color) {
         // Code that gets executed when the block is run
         console.log('LED color:'+color);
@@ -122,24 +169,23 @@
 
         extDevice.send(TxCmdBuffer.buffer);
     };
-
-    ext.aming = function(angle) {
+    
+    ext.tailLamp = function(vBrightness) {
         // Code that gets executed when the block is run
-        console.log('Aming, rotate:'+angle);
+        console.log('tail Lamp : '+vBrightness);
 
         if(!extDevice) return;
         
+        initCmdBuffer(LedCmdID); // LED command
         
-        initCmdBuffer(AimCmdID); // System command
-        
-        TxCmdBuffer[2] = 0; // 
-        TxCmdBuffer[3] = getByte_High(angle);
-        TxCmdBuffer[4] = getByte_Low(angle);
+        TxCmdBuffer[2] = TailLampID; // Tail Lamp
+        TxCmdBuffer[3] = 0;
+        TxCmdBuffer[4] = 0;
         TxCmdBuffer[5] = 0;
-        TxCmdBuffer[6] = 0;
+        TxCmdBuffer[6] = vBrightness;
 
         extDevice.send(TxCmdBuffer.buffer);
-    };
+    }
 
     function initCmdBuffer(cmdType) {
     	TxCmdBuffer[0] = HeaderStart;
@@ -312,21 +358,27 @@
               [' ', 'Roll with %n degrees, speed %n', 'roll', '0', '50'],
               [' ', 'Roll to %m.direction , speed %n', 'rollDir', 'forward'],
               [' ', 'Roll Stop','rollStop'],
-              [' ', 'set LED to %m.lightColor', 'light', 'red'],
-              [' ', 'set LED with Red:%n Green:%n Blue:%n', 'lightRGB', '255', '0', '0'],
+              [' ', 'set Heading %n degrees', 'heading', '0'],
+              [' ', 'set Color to %m.lightColor', 'light', 'red'],
+              [' ', 'set Color with Red:%n Green:%n Blue:%n', 'lightRGB', '255', '0', '0'],
+              [' ', 'set Tail Lamp %n.taillight','tailLamp','255'],
               ['h', 'when Collision detected', 'whenSensorDetected'],
               ['-'],
-              [' ', 'Aming, rotating %m.amingAngle degrees', 'aming', '10']
+              [' ', 'Aiming, rotating %m.aimingAngle degrees', 'aiming', '10'],
+              [' ', 'Aiming, End','aimingStop']
             ],
             ko: [
               [' ', '이동 %n 도 방향, 속도 %n', 'roll', '0', '50'],
               [' ', '이동 %m.direction 속도 %n', 'rollDir', '앞으로'],
-              [' ', '정지','rollStop'],
-              [' ', '램프색 바꾸기, %m.lightColor', 'light', '빨강'],
-              [' ', '램프색 조합하기, 빨강:%n 초록:%n 파랑:%n', 'lightRGB', '255', '0', '0'],
+              [' ', '이동 정지','rollStop'],
+              [' ', '머리 방향, %n 도', 'heading', '0'],
+              [' ', '색 바꾸기, %m.lightColor', 'light', '빨강'],
+              [' ', '색 바꾸기, 빨강:%n 초록:%n 파랑:%n', 'lightRGB', '255', '0', '0'],
+              [' ', '조준 조명 %n','tailLamp','255'],
               ['h', '충돌하면', 'whenSensorDetected'],
               ['-'],
-              [' ', '정면맞추기, %m.amingAngle 도 회전', 'aming', '10']
+              [' ', '정면맞추기, %m.aimingAngle 도 회전', 'aiming', '10'],
+              [' ', '정면맞추기, 완료','aimingStop']
             ]
     };
 
@@ -334,12 +386,12 @@
           en: {
             direction: ['forward', 'backward', 'left', 'right'],
             lightColor: ['red', 'bright red', 'yellow', 'green', 'bright blue', 'blue', 'magenta','white','off'],
-            amingAngle: ['5','10','15','30','45']
+            aimingAngle: ['5','10','15','30','45']
           },
           ko: {
             direction: ['앞으로', '뒤로', '왼쪽', '오른쪽'],
             lightColor: ['빨강', '주황', '노랑', '초록', '하늘', '파랑', '보라', '흰', '끄기'],
-            amingAngle: ['5','10','15','30','45']
+            aimingAngle: ['5','10','15','30','45']
           }
     };
   
