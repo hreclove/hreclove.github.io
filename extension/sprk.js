@@ -117,7 +117,7 @@
 
     ext.heading = function(angle) {
         // Code that gets executed when the block is run
-        console.log('Heading:'+anagle);
+        console.log('Heading:'+angle);
 
         if(!extDevice) return;
         
