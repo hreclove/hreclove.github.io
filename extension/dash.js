@@ -11,7 +11,7 @@
     var LedCmdID = 2;
     var AimCmdID = 3;
     
-    var isOnline = 0;
+    var isOnline = false;
     
     var channels = {
         sensor: 1,
@@ -178,11 +178,11 @@
         	}
         }
         
-        if(inputSystem[0] == 0x01) {
-        	isOnline = 0;
+        if(inputSystem[0] == 2) {
+        	isOnLine = true;
         }
-        else if(inputSystem[0] == 0x02) {
-        	isOnLine = 1;
+        else {
+        	isOnline = false;
         }
 
         if (watchdog) {
@@ -254,7 +254,7 @@
             extDevice.set_receive_handler(null);
             extDevice.close();
             extDevice = null;
-            isOnline = 0;
+            isOnline = false;
             tryNextDevice();
         }, 1000);
     }
@@ -266,27 +266,27 @@
         pingCmd[1] = HeaderEnd;
         poller = setInterval(function () {
             extDevice.send(pingCmd.buffer);
-        }, 100);
+        }, 500);
     }
 
     ext._deviceRemoved = function (dev) {
         if (extDevice != dev) return;
         if (poller) poller = clearInterval(poller);
         extDevice = null;
-        isOnline = 0;
+        isOnline = false;
     };
 
     ext._shutdown = function () {
         if (poller) poller = clearInterval(poller);
         if (extDevice) extDevice.close();
         extDevice = null;
-        isOnline = 0;
+        isOnline = false;
     };
 
     ext._getStatus = function () {
         if(!extDevice) return {status: 1, msg: 'DASH disconnected'};
         if(watchdog) return {status: 1, msg: 'Probing for DASH'};
-        if(isOnline == 1) return {status: 2, msg: 'DASH connected'};
+        if(isOnline) return {status: 2, msg: 'DASH connected'};
         return {status: 1, msg: 'Probing for DASH'};
     };
 
