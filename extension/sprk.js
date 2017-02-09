@@ -242,6 +242,7 @@
 
         if (watchdog) {
             clearTimeout(watchdog);
+            watchdog = setTimeout(watchdog_func, 3000);
         }
         
         rawData = null;
@@ -269,9 +270,9 @@
         // That will get us back here next time a device is connected.
         extDevice = potentialDevices.shift();
         try{
-        if (extDevice) {
-            extDevice.open({stopBits: 0, bitRate: 38400, ctsFlowControl: 0}, deviceOpened);
-        }
+            if (extDevice) {
+                extDevice.open({stopBits: 0, bitRate: 38400, ctsFlowControl: 0}, deviceOpened);
+            }
         } 
         catch(err) {
             console.log('Device Open Error');
@@ -304,17 +305,19 @@
 
         sendStartPing();
         
-        watchdog = setTimeout(function () {
-            // This device didn't get good data in time, so give up on it. Clean up and then move on.
-            // If we get good data then we'll terminate this watchdog.
-            if(poller) clearInterval(poller);
-            poller = null;
-            extDevice.set_receive_handler(null);
-            extDevice.close();
-            extDevice = null;
-            extDeviceOnline = false;
-            tryNextDevice();
-        }, 3000);
+        watchdog = setTimeout(watchdog_func, 3000);
+    }
+    
+    function watchdog_func() {
+        // This device didn't get good data in time, so give up on it. Clean up and then move on.
+        // If we get good data then we'll terminate this watchdog.
+        if(poller) clearInterval(poller);
+        poller = null;
+        extDevice.set_receive_handler(null);
+        extDevice.close();
+        extDevice = null;
+        extDeviceOnline = false;
+        tryNextDevice();
     }
 
     function sendStartPing() {
