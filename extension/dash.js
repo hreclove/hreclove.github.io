@@ -167,7 +167,6 @@
         
         if(inputSystem[0] == 2) {
         	extDeviceOnline = true;
-        	stopPing();
         }
         else {
         	extDeviceOnline = false;
@@ -175,7 +174,6 @@
 
         if (watchdog) {
             clearTimeout(watchdog);
-            watchdog = null;
         }
         
         rawData = null;
@@ -281,7 +279,6 @@
 
     ext._getStatus = function () {
         if(!extDevice) return {status: 1, msg: 'DASH disconnected'};
-        if(watchdog) return {status: 1, msg: 'Probing for DASH'};
         if(extDeviceOnline) return {status: 2, msg: 'DASH connected'};
         return {status: 1, msg: 'Probing for DASH'};
     };
