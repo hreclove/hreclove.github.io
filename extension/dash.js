@@ -42,7 +42,13 @@
     // Collision Sensor detected
     ext.whenSensorDetected = function () {
         if (!extDevice || !extDeviceOnline) return false;
-        if (inputSensor[0] == CollisionSensorID) return true;
+        if (inputSensor[0] == CollisionSensorID) {
+            if(inputSensor[1] != 0) {
+                inputSensor[0] = 0;  // clear
+                inputSensor[1] = 0;  // clear
+                return true;
+            }
+        }
         return false;
     };
    
