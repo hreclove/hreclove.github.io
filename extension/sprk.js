@@ -4,14 +4,22 @@
     
     var HeaderStart = 0x3C;
     var HeaderEnd = 0x3E;
+    
+    // Sensor ID
     var CollisionSensorID = 0x40;
-    var TailLampID = 0x01; // for LED
-    var AimingModeID = 0x01; // for ROLL
-    var HeadingModeID = 0x02;   // for ROLL
-   
+
+    // Command ID
     var SysCmdID = 0;
     var RollCmdID = 1;
     var LedCmdID = 2;
+    
+    // Command type
+    var TailLampID = 0x01; // for LED
+    var AimingModeID = 0x01; // for ROLL
+    var HeadingModeID = 0x02;   // for ROLL
+    var CollisionConfigID = 0x80;   // for SYSTEM
+   
+
     
     var extDeviceOnline = false;
     
@@ -196,6 +204,42 @@
         extDevice.send(TxCmdBuffer.buffer);
     }
 
+    ext.collisionConfig = function(vThreshold, vSpeed, vDuration)
+    {
+        // Code that gets executed when the block is run
+
+        if(!extDevice  || !extDeviceOnline) return;
+
+        console.log('Collision config, threshold: '+vThreshold+' Speed:'+vSpeed+' Duration:'+vDuration+' sec');
+        
+        if(vThreshold > 255) vThreshold = 255;
+        if(vSpeed > 255) vSpeed = 255;
+        if(vDuration > 2.5) vDuration = 2.5;
+
+        var vDuration10ms = vDuration * 100;
+        
+        initCmdBuffer(SysCmdID); // System command
+        
+        TxCmdBuffer[2] = CollisionConfigID; // Tail Lamp
+        TxCmdBuffer[3] = 1;  // default
+        TxCmdBuffer[4] = vThreshold;
+        TxCmdBuffer[5] = vSpeed;
+        TxCmdBuffer[6] = vDuration10ms;
+
+        extDevice.send(TxCmdBuffer.buffer);
+    }
+
+    ext.collisionSensingOff = function()
+    {
+        // Code that gets executed when the block is run
+
+        if(!extDevice  || !extDeviceOnline) return;
+
+        console.log('Collision config OFF');
+        
+        ext.collisionConfig(0,0,0);
+    }
+
     function initCmdBuffer(cmdType) {
     	TxCmdBuffer[0] = HeaderStart;
     	TxCmdBuffer[1] = cmdType;
@@ -227,17 +271,17 @@
             }
         } 
         else if(channel == channels['sensor']) {
-        	for (var i = 2; i < 7; i++) {
-        		//console.log('inputSensor='+bytes[i].toString(16));
-            inputSensor[i-2] = bytes[i];  // received data without Header < >
-        	}
+            for (var i = 2; i < 7; i++) {
+                //console.log('inputSensor='+bytes[i].toString(16));
+                inputSensor[i-2] = bytes[i];  // received data without Header < >
+            }
         }
         
         if(inputSystem[0] == 2) {
-        	extDeviceOnline = true;
+            extDeviceOnline = true;
         }
         else {
-        	extDeviceOnline = false;
+            extDeviceOnline = false;
         }
 
         if (watchdog) {
@@ -384,6 +428,9 @@
               [' ', 'set Color to %m.lightColor', 'light', 'red'],
               [' ', 'set Color with Red:%n Green:%n Blue:%n', 'lightRGB', '255', '0', '0'],
               [' ', 'set Tail Lamp %n.taillight','tailLamp','255'],
+              ['-'],
+              [' ', 'config Collision sensing, threshold %n , speed %n , duration %n sec', 'collisionConfig', '100', '100', '1'],
+              [' ', 'config Collision sensing OFF', 'collisionSensingOff'],
               ['h', 'when Collision detected', 'whenSensorDetected'],
               ['-'],
               [' ', 'Aiming, rotate %m.aimingAngle degrees', 'aimingAngle', '10'],
@@ -397,6 +444,9 @@
               [' ', '색 바꾸기, %m.lightColor', 'light', '빨강'],
               [' ', '색 바꾸기, 빨강:%n 초록:%n 파랑:%n', 'lightRGB', '255', '0', '0'],
               [' ', '조준 조명 %n','tailLamp','255'],
+              ['-'],
+              [' ', '충돌감지, 기준값 %n , 속도 %n , 발생기간 %n 초', 'collisionConfig', '100', '100', '1'],
+              [' ', '충돌감지 끄기', 'collisionSensingOff'],
               ['h', '충돌하면', 'whenSensorDetected'],
               ['-'],
               [' ', '정면맞추기, %m.aimingAngle 도 회전', 'aimingAngle', '10'],

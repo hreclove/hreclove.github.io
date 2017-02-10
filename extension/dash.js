@@ -6,6 +6,7 @@
     var HeaderEnd = 0x3E;
     var CollisionSensorID = 0x40;
    
+    // Command ID
     var SysCmdID = 0;
     var RollCmdID = 1;
     var LedCmdID = 2;
@@ -159,17 +160,17 @@
             }
         } 
         else if(channel == channels['sensor']) {
-        	for (var i = 2; i < 7; i++) {
-        		//console.log('inputSensor='+bytes[i].toString(16));
-            inputSensor[i-2] = bytes[i];  // received data without Header < >
-        	}
+            for (var i = 2; i < 7; i++) {
+                //console.log('inputSensor='+bytes[i].toString(16));
+                inputSensor[i-2] = bytes[i];  // received data without Header < >
+            }
         }
         
         if(inputSystem[0] == 2) {
-        	extDeviceOnline = true;
+            extDeviceOnline = true;
         }
         else {
-        	extDeviceOnline = false;
+            extDeviceOnline = false;
         }
 
         if (watchdog) {
