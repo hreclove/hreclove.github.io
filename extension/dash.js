@@ -238,7 +238,7 @@
         TxCmdBuffer[2] = EyesLampID; // which lamp
         TxCmdBuffer[3] = 0;
         TxCmdBuffer[4] = 0;
-        TxCmdBuffer[5] = vEyesLampID;
+        TxCmdBuffer[5] = menus[lang]['eyeLamp'].indexOf(vEyesLampID) + 1;
 
         if(vOnOff == menus[lang]['onOff'][onOffTable['off']]) {TxCmdBuffer[6] = 0;}
         else if(vOnOff == menus[lang]['onOff'][onOffTable['on']]) {TxCmdBuffer[6] = 255;}
@@ -280,7 +280,7 @@
         initCmdBuffer(SoundCmdID); // Sound command
 
         TxCmdBuffer[2] = SoundPlayID; // which sound type
-        TxCmdBuffer[3] = vSndIndex;
+        TxCmdBuffer[3] = menus[lang]['soundGroup'].indexOf(vSndIndex);
         TxCmdBuffer[4] = vVolume;
         TxCmdBuffer[5] = 0;
 
@@ -292,10 +292,19 @@
 
         if(!extDevice  || !extDeviceOnline) return;
         
-        console.log('Sound Group2 index:'+vSndIndex + ' volume:'+vVolume);
+        console.log('Sound GroupExt index:'+vSndIndex + ' volume:'+vVolume);
     
-        ext.soundPlay(0x80+vSndIndex,vVolume);
-    };
+        if(vVolume > 100) vVolume = 100; if(vVolume<0) vVolume = 0;
+                      
+        initCmdBuffer(SoundCmdID); // Sound command
+
+        TxCmdBuffer[2] = SoundPlayID; // which sound type
+        TxCmdBuffer[3] = 0x80 + menus[lang]['soundGroupExt'].indexOf(vSndIndex);
+        TxCmdBuffer[4] = vVolume;
+        TxCmdBuffer[5] = 0;
+
+        extDevice.send(TxCmdBuffer.buffer);
+     };
 
     function initCmdBuffer(cmdType) {
     	TxCmdBuffer[0] = HeaderStart;
