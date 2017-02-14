@@ -517,7 +517,7 @@
               [' ', '눈 조명 #%m.eyeLamp %m.onOff', 'lightEyes', '1', '켜기'],
               [' ', '눈 조명, 모양값 0x%n 으로 %m.onOff', 'lightEyesMask', '0FFF', '켜기'],
               ['-'],
-              [' ', '소리 %m.soundGroup , 음량 %n', 'soundPlay','ok','80'],
+              [' ', '소리 %m.soundGroup , 음량 %n', 'soundPlay','좋아','80'],
               ['-'],
               ['h', '큰 버튼을 누르면', 'whenTopButtonPressed'],
               ['-']
@@ -540,7 +540,7 @@
             ledName: ['왼쪽 귀', '오른쪽 귀', '가슴'],
             lampName: ['꼬리등', '큰 버튼'],
             eyeLamp: ['1','2','3','4','5','6','7','8','9','10','11','12'],
-            soundGroup:['ok','bye','sigh','bragging','confused','cool','huh','hi','wah','wow','wee','woohoo','haha','ooh','grunt','lets go','tah dah','snoring','surprised','weehee','uh huh','uh oh','yippe'],
+            soundGroup:['좋아','잘가','하아','랄라랄라','정신차려','멋진걸','으음','안녕','어어','와우','아아','유후','하하히히','우우','으라차','출발','짜쟌','그르릉','우우우','랄랄라','예우후','어-어','야호'],
             onOff: ['끄기','켜기']
           }
     };
