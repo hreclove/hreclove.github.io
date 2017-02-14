@@ -68,7 +68,8 @@
         if(!extDevice || !extDeviceOnline) return;
 
         console.log('Rolling angle:'+angle+' speed:'+speed);
-        
+        if(speed > 255) speed = 255; if(speed < 0) speed = 0;
+        if(angle > 359) angle = 359; if(angle < 0) angle = 0;
         initCmdBuffer(RollCmdID);  // Roll command
         
         TxCmdBuffer[2] = 0; // roll mode
@@ -111,7 +112,9 @@
         if(!extDevice  || !extDeviceOnline) return;
 
         console.log('Aiming, angle:'+angle);
-        
+
+        if(angle > 359) angle = 359; if(angle < 0) angle = 0;
+
         initCmdBuffer(RollCmdID);  // Roll command
         
         TxCmdBuffer[2] = AimingModeID; // Aiming mode
@@ -139,6 +142,8 @@
         if(!extDevice  || !extDeviceOnline) return;
 
         console.log('Heading:'+angle);
+
+        if(angle > 359) angle = 359; if(angle < 0) angle = 0;
         
         initCmdBuffer(RollCmdID);  // Roll command
         
@@ -179,9 +184,9 @@
                       
         initCmdBuffer(LedCmdID); // LED command
         
-        if(vRed>255) vRed=255;
-        if(vGreen>255) vGreen=255;
-        if(vBlue>255) vBlue=255;
+        if(vRed>255) vRed=255; if(vRed < 0) vRed = 0;
+        if(vGreen>255) vGreen=255; if(vGreen < 0) vGreen = 0;
+        if(vBlue>255) vBlue=255; if(vBlue < 0) vBlue = 0;
         
         TxCmdBuffer[2] = 0; // which lamp
         TxCmdBuffer[3] = vRed;
@@ -201,6 +206,8 @@
         
         initCmdBuffer(LedCmdID); // LED command
         
+        if(vBrightness>255) vBrightness=255; if(vBrightness<0) vBrightness=0;
+
         TxCmdBuffer[2] = TailLampID; // Tail Lamp
         TxCmdBuffer[3] = 0;
         TxCmdBuffer[4] = 0;
@@ -218,9 +225,9 @@
 
         console.log('Collision config, threshold: '+vThreshold+' Speed:'+vSpeed+' Duration:'+vDuration+' sec');
         
-        if(vThreshold > 255) vThreshold = 255;
-        if(vSpeed > 255) vSpeed = 255;
-        if(vDuration > 2.5) vDuration = 2.5;
+        if(vThreshold > 255) vThreshold = 255; if(vThreshold < 0) vThreshold = 0;
+        if(vSpeed > 255) vSpeed = 255; if(vSpeed < 0) vSpeed = 0;
+        if(vDuration > 2.5) vDuration = 2.5; if(vDuration < 0) vDuration = 0;
 
         var vDuration10ms = vDuration * 100;
         
@@ -428,12 +435,12 @@
             // 'h' 	Hat block (synchronous, returns boolean, true = run stack)
             en: [
               [' ', 'Roll to %n degrees, speed %n', 'roll', '0', '50'],
-              [' ', 'Roll to %m.direction , speed %n', 'rollDir', 'forward'],
+              [' ', 'Roll to %m.direction , speed %n', 'rollDir', 'forward', '50'],
               [' ', 'Roll Stop','rollStop'],
               [' ', 'set Heading %n degrees', 'headingAngle', '0'],
               [' ', 'set Color to %m.lightColor', 'light', 'red'],
               [' ', 'set Color with Red:%n Green:%n Blue:%n', 'lightRGB', '255', '0', '0'],
-              [' ', 'set Tail Lamp %n.taillight','tailLamp','255'],
+              [' ', 'set Tail Lamp %n','tailLamp','255'],
               ['-'],
               [' ', 'config Collision sensing, threshold %n , speed %n , duration %n sec', 'collisionConfig', '50', '50', '1'],
               [' ', 'config Collision sensing OFF', 'collisionSensingOff'],
@@ -444,7 +451,7 @@
             ],
             ko: [
               [' ', '이동 %n 도 방향, 속도 %n', 'roll', '0', '50'],
-              [' ', '이동 %m.direction 속도 %n', 'rollDir', '앞으로'],
+              [' ', '이동 %m.direction 속도 %n', 'rollDir', '앞으로', '50'],
               [' ', '이동 정지','rollStop'],
               [' ', '머리 방향, %n 도', 'headingAngle', '0'],
               [' ', '색 바꾸기, %m.lightColor', 'light', '빨강'],

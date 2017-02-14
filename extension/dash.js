@@ -4,12 +4,30 @@
     
     var HeaderStart = 0x3C;
     var HeaderEnd = 0x3E;
-    var CollisionSensorID = 0x40;
+    
+    var TopButtonID = 0x40;  // TODO 
    
     // Command ID
     var SysCmdID = 0;
     var RollCmdID = 1;
     var LedCmdID = 2;
+    var SoundCmdId = 3;
+
+    // Command type
+    var TailLampID = 0x01; // for LED
+    var TopButtonLampID = 0x02;
+    var LeftEarLampID = 0x03;
+    var RightEarLampID = 0x04;
+    var ChestLampID = 0x05;
+    var EyesLampID = 0x06;
+    
+    var HeadMoveID = 0x03;   // for ROLL
+    
+    var SoundPlayID = 0x01;  // for SOUND
+    
+    var CollisionConfigID = 0x80;   // for SYSTEM
+   
+
     
     var extDeviceOnline = false;
     
@@ -31,18 +49,34 @@
     };
     
     var dirTable = {
-        'forward':0, 
+        'forward': 0, 
         'backward': 1, 
         'left': 2, 
         'right': 3
     };
+    
+    var lightLampRgbTable = {
+        'left ear': 0,
+        'right ear': 1,
+        'chest': 2,
+    }
+    
+    var lightLampTable = {
+        'tail': 0,
+        'top button': 1
+    };
+    
+    var onOffTable = {
+        'off': 0,
+        'on': 1
+    }
 
     var TxCmdBuffer = new Uint8Array(8);
     
-    // Collision Sensor detected
-    ext.whenSensorDetected = function () {
+    // Top button pressed
+    ext.whenTopButtonPressed = function () {
         if (!extDevice || !extDeviceOnline) return false;
-        if (inputSensor[0] == CollisionSensorID) {
+        if (inputSensor[0] == TopButtonID) {
             if(inputSensor[1] != 0) {
                 inputSensor[0] = 0;  // clear
                 inputSensor[1] = 0;  // clear
@@ -52,85 +86,184 @@
         return false;
     };
    
-    ext.roll = function(angle, speed) {
+    ext.bodyMove = function(angularVelocity, linearVelocity) {
         // Code that gets executed when the block is run
 
         if(!extDevice || !extDeviceOnline) return;
 
-        console.log('Rolling angle:'+angle+' speed:'+speed);
+        console.log('Rolling angularVelocity:'+angularVelocity+' linearVelocity:'+linearVelocity);
+
+        if(angularVelocity>389) angularVelocity = 389;
+        if(angularVelocity<-389) angularVelocity = -389;
+        
+        if(linearVelocity>100) linearVelocity = 100;
+        if(linearVelocity<-100) linearVelocity =-100;
         
         initCmdBuffer(RollCmdID);  // Roll command
         
         TxCmdBuffer[2] = 0; // roll mode
-        TxCmdBuffer[3] = getByte_High(angle);
-        TxCmdBuffer[4] = getByte_Low(angle);
-        TxCmdBuffer[5] = getByte_High(speed);
-        TxCmdBuffer[6] = getByte_Low(speed);
+        TxCmdBuffer[3] = getByte_High(angularVelocity);
+        TxCmdBuffer[4] = getByte_Low(angularVelocity);
+        TxCmdBuffer[5] = getByte_High(linearVelocity);
+        TxCmdBuffer[6] = getByte_Low(linearVelocity);
 
         extDevice.send(TxCmdBuffer.buffer);
 
     };
 
-    ext.rollDir = function(dir, speed) {
+    ext.bodyMoveDir = function(dir, linearVelocity) {
         // Code that gets executed when the block is run
 
         if(!extDevice  || !extDeviceOnline) return;
 
-        console.log('Rolling dir:'+dir+' speed:'+speed);
+        console.log('Rolling dir:'+dir+' linearVelocity:'+linearVelocity);
         
-        if(dir == menus[lang]['direction'][dirTable['forward']]) ext.roll(0,speed);
-        else if(dir == menus[lang]['direction'][dirTable['backward']]) ext.roll(180,speed);
-        else if(dir == menus[lang]['direction'][dirTable['left']]) ext.roll(270,speed);
-        else if(dir == menus[lang]['direction'][dirTable['right']]) ext.roll(90,speed);
+        if(dir == menus[lang]['direction'][dirTable['forward']]) ext.bodyMove(0,linearVelocity);
+        else if(dir == menus[lang]['direction'][dirTable['backward']]) ext.bodyMove(0,linearVelocity);
+        else if(dir == menus[lang]['direction'][dirTable['left']]) ext.bodyMove(90,linearVelocity);
+        else if(dir == menus[lang]['direction'][dirTable['right']]) ext.bodyMove(-90,linearVelocity);
     };
     
-    ext.rollStop = function() {
+    ext.stopMove = function() {
         // Code that gets executed when the block is run
 
         if(!extDevice  || !extDeviceOnline) return;
 
         console.log('rollStop');
         
-        ext.roll(0,0);
+        ext.bodyMove(0,0);
     };
 
-    ext.light = function(color) {
+    ext.headPosition = function(angleX, angleY) {
+        // Code that gets executed when the block is run
+
+        if(!extDevice || !extDeviceOnline) return;
+
+        console.log('Head Posion angleX:'+angleX+' angleY:'+angleY);
+        
+        if(angleX < -120) angleX = -120;
+        if(angleX > 120) angleX = 120;
+        
+        if(angleY > 7) angleY = 7;
+        if(angleY < -20) angleY = -20;
+        
+        initCmdBuffer(RollCmdID);  // Roll command
+        
+        TxCmdBuffer[2] = HeadMoveID; // roll mode
+        TxCmdBuffer[3] = getByte_High(angleX);
+        TxCmdBuffer[4] = getByte_Low(angleX);
+        TxCmdBuffer[5] = getByte_High(angleY);
+        TxCmdBuffer[6] = getByte_Low(angleY);
+
+        extDevice.send(TxCmdBuffer.buffer);
+
+    };
+
+
+    ext.light = function(vName, vColor) {
         // Code that gets executed when the block is run
 
         if(!extDevice  || !extDeviceOnline) return;
 
-        console.log('LED color:'+color);
+        console.log('LED name :'+vName + ' color:'+vColor);
 
-                      
-        if(color == menus[lang]['lightColor'][colorTable['red']]) {ext.lightRGB(255,0,0);}
-        else if(color == menus[lang]['lightColor'][colorTable['bright red']]) {ext.lightRGB(255,128,0);}
-        else if(color == menus[lang]['lightColor'][colorTable['yellow']]) {ext.lightRGB(255,255,0);}
-        else if(color == menus[lang]['lightColor'][colorTable['green']]) {ext.lightRGB(0,255,0);}
-        else if(color == menus[lang]['lightColor'][colorTable['bright blue']]) {ext.lightRGB(0,128,255);}	
-        else if(color == menus[lang]['lightColor'][colorTable['blue']]) {ext.lightRGB(0,0,255);}
-        else if(color == menus[lang]['lightColor'][colorTable['magenta']]) {ext.lightRGB(255,0,255);}	
-        else if(color == menus[lang]['lightColor'][colorTable['white']]) {ext.lightRGB(255,255,255);}
-        else if(color == menus[lang]['lightColor'][colorTable['off']]) {ext.lightRGB(0,0,0);}
+        if(vColor == menus[lang]['lightColor'][colorTable['red']]) {ext.lightRGB(vName,255,0,0);}
+        else if(vColor == menus[lang]['lightColor'][colorTable['bright red']]) {ext.lightRGB(vName,255,128,0);}
+        else if(vColor == menus[lang]['lightColor'][colorTable['yellow']]) {ext.lightRGB(vName,255,255,0);}
+        else if(vColor == menus[lang]['lightColor'][colorTable['green']]) {ext.lightRGB(vName,0,255,0);}
+        else if(vColor == menus[lang]['lightColor'][colorTable['bright blue']]) {ext.lightRGB(vName,0,128,255);}	
+        else if(vColor == menus[lang]['lightColor'][colorTable['blue']]) {ext.lightRGB(vName,0,0,255);}
+        else if(vColor == menus[lang]['lightColor'][colorTable['magenta']]) {ext.lightRGB(vName,255,0,255);}	
+        else if(vColor == menus[lang]['lightColor'][colorTable['white']]) {ext.lightRGB(vName,255,255,255);}
+        else if(vColor == menus[lang]['lightColor'][colorTable['off']]) {ext.lightRGB(vName,0,0,0);}
     };
 
-    ext.lightRGB = function(vRed,vGreen,vBlue) {
+    ext.lightRGB = function(vName, vRed,vGreen,vBlue) {
         // Code that gets executed when the block is run
 
         if(!extDevice  || !extDeviceOnline) return;
 
-        console.log('LED R:'+vRed+' G:'+vGreen+' B:'+vBlue);
+        console.log('LED name:'+vName+' R:'+vRed+' G:'+vGreen+' B:'+vBlue);
                       
         initCmdBuffer(LedCmdID); // LED command
         
-        if(vRed>255) vRed=255;
-        if(vGreen>255) vGreen=255;
-        if(vBlue>255) vBlue=255;
+        if(vRed>255) vRed=255; if(vRed < 0) vRed = 0;
+        if(vGreen>255) vGreen=255; if(vGreen < 0) vGreen = 0;
+        if(vBlue>255) vBlue=255; if(vBlue < 0) vBlue = 0;
         
-        TxCmdBuffer[2] = 0; // which lamp
+        if(vName == menus[lang]['ledName'][lightLampRgbTable['left ear']]) {TxCmdBuffer[2] =LeftEarLampID;}
+        else if(vName == menus[lang]['ledName'][lightLampRgbTable['right ear']]) {TxCmdBuffer[2] = RightEarLampID;}
+        else if(vName == menus[lang]['ledName'][lightLampRgbTable['chest']]) {TxCmdBuffer[2] = ChestLampID;}
+ 
         TxCmdBuffer[3] = vRed;
         TxCmdBuffer[4] = vGreen;
         TxCmdBuffer[5] = vBlue;
         TxCmdBuffer[6] = 0; // backlight
+
+        extDevice.send(TxCmdBuffer.buffer);
+    };
+
+    ext.lightLamp = function(vName, vBrightness) {
+        // Code that gets executed when the block is run
+
+        if(!extDevice  || !extDeviceOnline) return;
+
+        console.log('Light Lamp name:'+vName+' Brightness:'+vBrightness);
+                      
+        initCmdBuffer(LedCmdID); // LED command
+        
+        if(vBrightness>255) vBrightness=255; if(vBrightness<0) vBrightness=0;
+        
+        if(vName == menus[lang]['lampName'][lightLampTable['tail']]) {TxCmdBuffer[2] = TailLampID;}
+        else if(vName == menus[lang]['lampName'][lightLampTable['top botton']]) {TxCmdBuffer[2] = TopButtonLampID; }
+
+        TxCmdBuffer[3] = 0;
+        TxCmdBuffer[4] = 0;
+        TxCmdBuffer[5] = 0;
+        TxCmdBuffer[6] = vBrightness; // backlight
+
+        extDevice.send(TxCmdBuffer.buffer);
+    };
+
+
+    ext.lightEyes = function(vEyesLampID, vOnOff) {
+        // Code that gets executed when the block is run
+
+        if(!extDevice  || !extDeviceOnline) return;
+
+        console.log('Eyes '+vEyesLampID+' OnOff:'+vOnOff);
+                      
+        initCmdBuffer(LedCmdID); // LED command
+
+        TxCmdBuffer[2] = EyesLampID; // which lamp
+        TxCmdBuffer[3] = 0;
+        TxCmdBuffer[4] = 0;
+        TxCmdBuffer[5] = vEyesLampID;
+
+        if(vOnOff == menus[lang]['onOff'][onOffTable['off']]) {TxCmdBuffer[6] = 0;}
+        else if(vOnOff == menus[lang]['onOff'][onOffTable['on']]) {TxCmdBuffer[6] = 255;}
+
+        extDevice.send(TxCmdBuffer.buffer);
+    };
+    
+
+    ext.lightEyesMask = function(vHexMask, vOnOff) {
+        // Code that gets executed when the block is run
+
+        if(!extDevice  || !extDeviceOnline) return;
+        
+        var vDec = parseInt(vHexMask,16);
+        console.log('Eyes Mask:'+vHexMask+' dec='+vDec);
+                      
+        initCmdBuffer(LedCmdID); // LED command
+
+        TxCmdBuffer[2] = EyesLampID; // which lamp
+        TxCmdBuffer[3] = getByte_High(vDec);
+        TxCmdBuffer[4] = getByte_Low(vDec);
+        TxCmdBuffer[5] = 0;
+
+        if(vOnOff == menus[lang]['onOff'][onOffTable['off']]) {TxCmdBuffer[6] = 0;}
+        else if(vOnOff == menus[lang]['onOff'][onOffTable['on']]) {TxCmdBuffer[6] = 255;}
 
         extDevice.send(TxCmdBuffer.buffer);
     };
@@ -316,21 +449,31 @@
             // 'R' 	Asynchronous reporter
             // 'h' 	Hat block (synchronous, returns boolean, true = run stack)
             en: [
-              [' ', 'Roll to %n degrees, speed %n', 'roll', '0', '50'],
-              [' ', 'Roll to %m.direction , speed %n', 'rollDir', 'forward'],
-              [' ', 'Roll Stop','rollStop'],
-              [' ', 'set Color to %m.lightColor', 'light', 'red'],
-              [' ', 'set Color with Red:%n Green:%n Blue:%n', 'lightRGB', '255', '0', '0'],
-              ['h', 'when Collision detected', 'whenSensorDetected'],
+              [' ', 'Moving, Angular %n degrees/sec, Linear %n cm/sec', 'bodyMove', '0', '20'],
+              [' ', 'Moving, %m.direction , Linear %n cm/sec', 'bodyMoveDir', 'forward', '20'],
+              [' ', 'Stop Move','stopMove'],
+              [' ', 'Head position to X %n, Y %n', 'headPosition','0,'0'],
+              [' ', 'Color %m.ledName to %m.lightColor', 'light', 'chest', 'red'],
+              [' ', 'Color %m.ledName with Red:%n Green:%n Blue:%n', 'lightRGB', 'chest', '255', '0', '0'],
+              [' ', 'Lamp %m.lampName with Brightness:%n', 'lightLamp', 'top button','255'],
+              [' ', 'Eye Lamp #%m.eyeLamp %m.onOff', 'lightEyes', 'on'],
+              [' ', 'Eye Lamp Pattern 0x%n for %m.onOff', 'lightEyesMask', '0FFF', 'on'],
+              ['-'],
+              ['h', 'when TopButton Pressed', 'whenTopButtonPressed'],
               ['-']
             ],
             ko: [
-              [' ', '이동 %n 도 방향, 속도 %n', 'roll', '0', '50'],
-              [' ', '이동 %m.direction 속도 %n', 'rollDir', '앞으로'],
-              [' ', '이동 정지','rollStop'],
-              [' ', '색 바꾸기, %m.lightColor', 'light', '빨강'],
-              [' ', '색 바꾸기, 빨강:%n 초록:%n 파랑:%n', 'lightRGB', '255', '0', '0'],
-              ['h', '충돌하면', 'whenSensorDetected'],
+              [' ', '이동, 초당 %n 도 회전, 초당 %n cm직진', 'bodyMove', '0', '50'],
+              [' ', '이동, %m.direction 방향, 초당 %n cm직진', 'bodyMoveDir', '앞으로', '30'],
+              [' ', '이동 정지','stopMove'],
+              [' ', '머리 위치, 가로 %n, 세로 %n', 'headPosition','0,'0'],
+              [' ', '색 바꾸기,%m.ledName %m.lightColor', 'light', '가슴', '빨강'],
+              [' ', '색 바꾸기,%m.ledName 빨강:%n 초록:%n 파랑:%n', 'lightRGB', '가슴', '255', '0', '0'],
+              [' ', '램프 %m.lampName 밝기:%n', 'lightLamp', '큰 버튼','255'],
+              [' ', '눈 조명 #%m.eyeLamp %m.onOff', 'lightEyes', '켜기'],
+              [' ', '눈 조명, 모양값 0x%n 으로 %m.onOff', 'lightEyesMask', '0FFF', '켜기'],
+              ['-'],
+              ['h', '큰 버튼을 누르면', 'whenTopButtonPressed'],
               ['-']
             ]
     };
@@ -338,11 +481,19 @@
     var menus = {
           en: {
             direction: ['forward', 'backward', 'left', 'right'],
-            lightColor: ['red', 'bright red', 'yellow', 'green', 'bright blue', 'blue', 'magenta','white','off']
+            lightColor: ['red', 'bright red', 'yellow', 'green', 'bright blue', 'blue', 'magenta','white','off'],
+            ledName: ['left ear', 'right ear', 'chest'],
+            lampName: ['tail', 'top button'],
+            eyeLamp: ['1','2','3','4','5','6','7','8','9','10','11','12'],
+            onOff: ['off','on']
           },
           ko: {
             direction: ['앞으로', '뒤로', '왼쪽', '오른쪽'],
-            lightColor: ['빨강', '주황', '노랑', '초록', '하늘', '파랑', '보라', '흰', '끄기']
+            lightColor: ['빨강', '주황', '노랑', '초록', '하늘', '파랑', '보라', '흰', '끄기'],
+            ledName: ['왼쪽 귀', '오른쪽 귀', '가슴'],
+            lampName: ['꼬리등', '큰 버튼'],
+            eyeLamp: ['1','2','3','4','5','6','7','8','9','10','11','12'],
+            onOff: ['끄기','켜기']
           }
     };
   
