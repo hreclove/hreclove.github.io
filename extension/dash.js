@@ -284,9 +284,6 @@
         TxCmdBuffer[4] = vVolume;
         TxCmdBuffer[5] = 0;
 
-        if(vOnOff == menus[lang]['onOff'][onOffTable['off']]) {TxCmdBuffer[6] = 0;}
-        else if(vOnOff == menus[lang]['onOff'][onOffTable['on']]) {TxCmdBuffer[6] = 255;}
-
         extDevice.send(TxCmdBuffer.buffer);
     };
     
