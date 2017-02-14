@@ -505,7 +505,7 @@
               [' ', '램프 %m.lampName 밝기:%n', 'lightLamp', '큰 버튼','255'],
               [' ', '눈 조명 #%m.eyeLamp %m.onOff', 'lightEyes', '1', '켜기'],
               [' ', '눈 조명, 모양값 0x%n 으로 %m.onOff', 'lightEyesMask', '0FFF', '켜기'],
-              [' ', '소리 %m.soundGroup, 음량 %n', 'soundPlay','ok','80'],
+              [' ', '소리 %m.soundGroup , 음량 %n', 'soundPlay','ok','80'],
               ['-'],
               ['h', '큰 버튼을 누르면', 'whenTopButtonPressed'],
               ['-']
