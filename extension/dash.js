@@ -11,7 +11,7 @@
     var SysCmdID = 0;
     var RollCmdID = 1;
     var LedCmdID = 2;
-    var SoundCmdId = 3;
+    var SoundCmdID = 3;
 
     // Command type
     var TailLampID = 0x01; // for LED
@@ -215,7 +215,7 @@
         if(vBrightness>255) vBrightness=255; if(vBrightness<0) vBrightness=0;
         
         if(vName == menus[lang]['lampName'][lightLampTable['tail']]) {TxCmdBuffer[2] = TailLampID;}
-        else if(vName == menus[lang]['lampName'][lightLampTable['top botton']]) {TxCmdBuffer[2] = TopButtonLampID; }
+        else if(vName == menus[lang]['lampName'][lightLampTable['top button']]) {TxCmdBuffer[2] = TopButtonLampID; }
 
         TxCmdBuffer[3] = 0;
         TxCmdBuffer[4] = 0;
