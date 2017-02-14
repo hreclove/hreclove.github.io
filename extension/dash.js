@@ -267,6 +267,38 @@
 
         extDevice.send(TxCmdBuffer.buffer);
     };
+    
+    ext.soundPlay = function(vSndIndex, vVolume) {
+        // Code that gets executed when the block is run
+
+        if(!extDevice  || !extDeviceOnline) return;
+        
+        console.log('Sound index:'+vSndIndex+' volume:'+vVolume);
+
+        if(vVolume > 100) vVolume = 100; if(vVolume<0) vVolume = 0;
+                      
+        initCmdBuffer(SoundCmdID); // Sound command
+
+        TxCmdBuffer[2] = SoundPlayID; // which sound type
+        TxCmdBuffer[3] = vSndIndex;
+        TxCmdBuffer[4] = vVolume;
+        TxCmdBuffer[5] = 0;
+
+        if(vOnOff == menus[lang]['onOff'][onOffTable['off']]) {TxCmdBuffer[6] = 0;}
+        else if(vOnOff == menus[lang]['onOff'][onOffTable['on']]) {TxCmdBuffer[6] = 255;}
+
+        extDevice.send(TxCmdBuffer.buffer);
+    };
+    
+    ext.soundPlayExt = function(vSndIndex,vVolume) {
+        // Code that gets executed when the block is run
+
+        if(!extDevice  || !extDeviceOnline) return;
+        
+        console.log('Sound Group2 index:'+vSndIndex + ' volume:'+vVolume);
+    
+        ext.soundPlay(0x80+vSndIndex,vVolume);
+    };
 
     function initCmdBuffer(cmdType) {
     	TxCmdBuffer[0] = HeaderStart;
@@ -458,6 +490,7 @@
               [' ', 'Lamp %m.lampName with Brightness:%n', 'lightLamp', 'top button','255'],
               [' ', 'Eye Lamp #%m.eyeLamp %m.onOff', 'lightEyes', '1', 'on'],
               [' ', 'Eye Lamp Pattern 0x%n for %m.onOff', 'lightEyesMask', '0FFF', 'on'],
+              [' ', 'Sound %m.soundGroup with volume %n', 'soundPlay','ok','80'],
               ['-'],
               ['h', 'when TopButton Pressed', 'whenTopButtonPressed'],
               ['-']
@@ -472,6 +505,7 @@
               [' ', '램프 %m.lampName 밝기:%n', 'lightLamp', '큰 버튼','255'],
               [' ', '눈 조명 #%m.eyeLamp %m.onOff', 'lightEyes', '1', '켜기'],
               [' ', '눈 조명, 모양값 0x%n 으로 %m.onOff', 'lightEyesMask', '0FFF', '켜기'],
+              [' ', '소리 %m.soundGroup, 음량 %n', 'soundPlay','ok','80'],
               ['-'],
               ['h', '큰 버튼을 누르면', 'whenTopButtonPressed'],
               ['-']
@@ -485,6 +519,7 @@
             ledName: ['left ear', 'right ear', 'chest'],
             lampName: ['tail', 'top button'],
             eyeLamp: ['1','2','3','4','5','6','7','8','9','10','11','12'],
+            soundGroup:['ok','bye','sigh','bragging','confused','cool','huh','hi','wah','wow','wee','woohoo','haha','ooh','grunt','lets go','tah dah','snoring','surprised','weehee','uh huh','uh oh','yippe'],
             onOff: ['off','on']
           },
           ko: {
@@ -493,6 +528,7 @@
             ledName: ['왼쪽 귀', '오른쪽 귀', '가슴'],
             lampName: ['꼬리등', '큰 버튼'],
             eyeLamp: ['1','2','3','4','5','6','7','8','9','10','11','12'],
+            soundGroup:['ok','bye','sigh','bragging','confused','cool','huh','hi','wah','wow','wee','woohoo','haha','ooh','grunt','lets go','tah dah','snoring','surprised','weehee','uh huh','uh oh','yippe'],
             onOff: ['끄기','켜기']
           }
     };
