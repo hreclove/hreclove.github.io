@@ -500,7 +500,7 @@
               [' ', 'Eye Lamp Pattern 0x%n for %m.onOff', 'lightEyesMask', '0FFF', 'on'],
               ['-'],
               [' ', 'Sound, Emotion %m.soundGroup with volume %n', 'soundPlay','ok','80'],
-              [' ', 'Sound, Effect %m.soundGroupExt with volume %n', 'soundPlayExt','ok','80'],
+              [' ', 'Sound, Effect %m.soundGroupExt with volume %n', 'soundPlayExt','airplane','80'],
               ['-'],
               ['h', 'when TopButton Pressed', 'whenTopButtonPressed'],
               ['-']
@@ -519,7 +519,7 @@
               [' ', '눈 조명, 모양값 0x%n 으로 %m.onOff', 'lightEyesMask', '0FFF', '켜기'],
               ['-'],
               [' ', '소리, 느낌 %m.soundGroup , 음량 %n', 'soundPlay','좋아','80'],
-              [' ', '소리, 효과음 %m.soundGroupExt , 음량 %n', 'soundPlayExt','좋아','80'],
+              [' ', '소리, 효과음 %m.soundGroupExt , 음량 %n', 'soundPlayExt','비행기','80'],
               ['-'],
               ['h', '큰 버튼을 누르면', 'whenTopButtonPressed'],
               ['-']
