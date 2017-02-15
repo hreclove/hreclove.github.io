@@ -176,8 +176,8 @@
         
         if(viewDir == menus[lang]['headDirection'][headPositionTable['left']]) ext.headPosition(90,0);
         else if(viewDir == menus[lang]['headDirection'][headPositionTable['right']]) ext.headPosition(-90,0);
-        else if(viewDir == menus[lang]['headDirection'][headPositionTable['top']]) ext.headPosition(-20,0);
-        else if(viewDir == menus[lang]['headDirection'][headPositionTable['bottom']]) ext.headPosition(7,0);
+        else if(viewDir == menus[lang]['headDirection'][headPositionTable['top']]) ext.headPosition(0,-12);
+        else if(viewDir == menus[lang]['headDirection'][headPositionTable['bottom']]) ext.headPosition(0,7);
         else if(viewDir == menus[lang]['headDirection'][headPositionTable['center']]) ext.headPosition(0,0);
     };
 
