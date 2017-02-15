@@ -70,6 +70,14 @@
         'off': 0,
         'on': 1
     }
+    
+    var headPositionTable = {
+        'left' : 0,
+        'right' : 1,
+        'center' : 2,
+        'top' : 3,
+        'bottom' : 4
+    }
 
     var TxCmdBuffer = new Uint8Array(8);
     
@@ -159,6 +167,19 @@
 
     };
 
+    ext.headViewPosition = function(viewDir) {
+        // Code that gets executed when the block is run
+
+        if(!extDevice || !extDeviceOnline) return;
+
+        console.log('Head View Position :'+viewDir);
+        
+        if(viewDir == menus[lang]['headDirection'][headPositionTable['left']]) ext.headPosition(90,0);
+        else if(viewDir == menus[lang]['headDirection'][headPositionTable['right']]) ext.headPosition(-90,0);
+        else if(viewDir == menus[lang]['headDirection'][headPositionTable['top']]) ext.headPosition(-20,0);
+        else if(viewDir == menus[lang]['headDirection'][headPositionTable['bottom']]) ext.headPosition(7,0);
+        else if(viewDir == menus[lang]['headDirection'][headPositionTable['center']]) ext.headPosition(0,0);
+    };
 
     ext.light = function(vName, vColor) {
         // Code that gets executed when the block is run
@@ -491,7 +512,8 @@
               [' ', 'Moving, %m.direction , Linear %n cm/sec', 'bodyMoveDir', 'forward', '20'],
               [' ', 'Stop Move','stopMove'],
               ['-'],
-              [' ', 'Head position to X %n, Y %n', 'headPosition','0','0'],
+              [' ', 'Head position to %m.headDirection', 'headViewPosition','center'],
+              [' ', 'Head position to Horizontal %n , Vertical %n degrees', 'headPosition','0','0'],
               ['-'],
               [' ', 'Color %m.ledName to %m.lightColor', 'light', 'chest', 'red'],
               [' ', 'Color %m.ledName with Red:%n Green:%n Blue:%n', 'lightRGB', 'chest', '255', '0', '0'],
@@ -510,7 +532,8 @@
               [' ', '이동, %m.direction 방향, 초당 %n cm직진', 'bodyMoveDir', '앞으로', '30'],
               [' ', '이동 정지','stopMove'],
               ['-'],
-              [' ', '머리 위치, 가로 %n, 세로 %n', 'headPosition','0','0'],
+              [' ', '머리 방향, %m.headDirection', 'headViewPosition','정면'],
+              [' ', '머리 방향, 좌우 %n 도, 상하 %n 도', 'headPosition','0','0'],
               ['-'],
               [' ', '색 바꾸기,%m.ledName %m.lightColor', 'light', '가슴', '빨강'],
               [' ', '색 바꾸기,%m.ledName 빨강:%n 초록:%n 파랑:%n', 'lightRGB', '가슴', '255', '0', '0'],
@@ -529,6 +552,7 @@
     var menus = {
           en: {
             direction: ['forward', 'backward', 'left', 'right'],
+            headDirection: ['left','right','center','top','bottom'],
             lightColor: ['red', 'bright red', 'yellow', 'green', 'bright blue', 'blue', 'magenta','white','off'],
             ledName: ['left ear', 'right ear', 'chest'],
             lampName: ['tail', 'top button'],
@@ -539,6 +563,7 @@
           },
           ko: {
             direction: ['앞으로', '뒤로', '왼쪽', '오른쪽'],
+            headDirection: ['왼쪽','오른쪽','정면','위','아래'],
             lightColor: ['빨강', '주황', '노랑', '초록', '하늘', '파랑', '보라', '흰', '끄기'],
             ledName: ['왼쪽 귀', '오른쪽 귀', '가슴'],
             lampName: ['꼬리등', '큰 버튼'],
