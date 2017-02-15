@@ -534,7 +534,7 @@
             lampName: ['tail', 'top button'],
             eyeLamp: ['1','2','3','4','5','6','7','8','9','10','11','12'],
             soundGroup:['ok','bye','sigh','bragging','confused','cool','huh','hi','wah','wow','wee','woohoo','haha','ooh','grunt','lets go','tah dah','snoring','surprised','weehee','uh huh','uh oh','yawn','yippe'],
-            soundGroupExt:['airplane','beep','crocodile','dinosaur','elephant','engine rev','goat','cat','dog','lion','gobble','helicopter','horse','lasers','squeak','short boost','tire squeal','train','truck horn','trumpet','tugboat','lip buzz','siren'],
+            soundGroupExt:['airplane','bot cute','crocodile','dinosaur','elephant','engine rev','goat','cat','dog','lion','gobble','helicopter','horse','squeak1','squeak2','short boost','tire squeal','train','truck horn','trumpet','tugboat','lip buzz','siren'],
             onOff: ['off','on']
           },
           ko: {
@@ -544,7 +544,7 @@
             lampName: ['꼬리등', '큰 버튼'],
             eyeLamp: ['1','2','3','4','5','6','7','8','9','10','11','12'],
             soundGroup:['좋아','잘가','하아','랄라랄라','정신차려','멋진걸','으음','안녕','어어','와우','아아','유후','하하히히','우우','으라차','출발','짜쟌','그르릉','우우우','랄랄라','예우후','어-어','하품','야호'],
-            soundGroupExt:['airplane','beep','crocodile','dinosaur','elephant','engine rev','goat','cat','dog','lion','gobble','helicopter','horse','lasers','squeak','short boost','tire squeal','train','truck horn','trumpet','tugboat','lip buzz','siren'],
+            soundGroupExt:['비행기','귀여운 로봇','악어','공룡','코끼리','엔진 회전','염소','고양이','개','사자','칠면조','헬리콥터','말','찍찍1','찍찍2','발사','타이어 소리','기차 경적','트럭 경적','트럼펫','뱃고동','부르릉 흉내','사이렌'],
             onOff: ['끄기','켜기']
           }
     };
