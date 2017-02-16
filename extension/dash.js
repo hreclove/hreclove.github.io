@@ -131,15 +131,15 @@
         if (!extDevice || !extDeviceOnline) return 0;
         if (inputSensor[0] == SensorRes_Distance) {
             var vReturnData = 0;
-            if(vSensorID == menus[lang]['distanceSensorList'][buttonSensorTable['Right Front']]) {
+            if(vSensorID == menus[lang]['distanceSensorList'][distanceSensorTable['Right Front']]) {
                 vReturnData = inputSensor[1];
                 if(vReturnData <= 3) vReturnData = 0;
             }
-            else if(vSensorID == menus[lang]['distanceSensorList'][buttonSensorTable['Left Front']]) {
+            else if(vSensorID == menus[lang]['distanceSensorList'][distanceSensorTable['Left Front']]) {
                 vReturnData = inputSensor[2];
                 if(vReturnData <= 3) vReturnData = 0;
             }
-            else if(vSensorID == menus[lang]['distanceSensorList'][buttonSensorTable['Back']]) {
+            else if(vSensorID == menus[lang]['distanceSensorList'][distanceSensorTable['Back']]) {
                 vReturnData = inputSensor[3];
                 if(vReturnData <= 5) vReturnData = 0;
             }
