@@ -5,8 +5,6 @@
     var HeaderStart = 0x3C;
     var HeaderEnd = 0x3E;
     
-    var TopButtonID = 0x40;  // TODO 
-   
     // Command ID
     var SysCmdID = 0;
     var RollCmdID = 1;
@@ -14,20 +12,27 @@
     var SoundCmdID = 3;
 
     // Command type
-    var TailLampID = 0x01; // for LED
+    var TailLampID = 0x01; // for LED Command
     var TopButtonLampID = 0x02;
     var LeftEarLampID = 0x03;
     var RightEarLampID = 0x04;
     var ChestLampID = 0x05;
     var EyesLampID = 0x06;
     
-    var HeadMoveID = 0x03;   // for ROLL
+    var HeadMoveID = 0x03;   // for ROLL Command
     
-    var SoundPlayID = 0x01;  // for SOUND
+    var SoundPlayID = 0x01;  // for SOUND Command
     
-    var CollisionConfigID = 0x80;   // for SYSTEM
+    var SensorConfigID = 0xA0;   // for SYSTEM Command
    
+    // Senser id for SensorConfigID
+    var SensorButtonID = 0x01;
+    var SensorDistanceID = 0x02;
 
+    
+    // Reported Sensor ID
+    var SensorRes_Button = 0x10;
+    var SensorRes_Distance = 0x20;
     
     var extDeviceOnline = false;
     
@@ -82,10 +87,11 @@
     var TxCmdBuffer = new Uint8Array(8);
     
     // Top button pressed
-    ext.whenTopButtonPressed = function () {
+    ext.whenButtonPressed = function () {
         if (!extDevice || !extDeviceOnline) return false;
-        if (inputSensor[0] == TopButtonID) {
+        if (inputSensor[0] == SensorRes_Button) {
             if(inputSensor[1] != 0) {
+                // TODO : check button mask
                 inputSensor[0] = 0;  // clear
                 inputSensor[1] = 0;  // clear
                 return true;
@@ -94,6 +100,48 @@
         return false;
     };
    
+    ext.buttonSetEnable = function(vOnOff) {
+        // Code that gets executed when the block is run
+
+        if(!extDevice || !extDeviceOnline) return;
+
+        console.log('Button Sensor:'+vOnOff);
+        
+        initCmdBuffer(SysCmdID); // System command
+
+        TxCmdBuffer[2] = SensorConfigID; // sensor config
+        TxCmdBuffer[3] = SensorButtonID;
+
+        if(vOnOff == menus[lang]['onOff'][onOffTable['off']]) {TxCmdBuffer[4] = 0;}
+        else if(vOnOff == menus[lang]['onOff'][onOffTable['on']]) {TxCmdBuffer[4] = 1;}
+
+        TxCmdBuffer[5] = 0;
+        TxCmdBuffer[6] = 0;
+
+        extDevice.send(TxCmdBuffer.buffer);
+    };
+    
+    ext.distanceSetEnable = function(vOnOff) {
+        // Code that gets executed when the block is run
+
+        if(!extDevice || !extDeviceOnline) return;
+
+        console.log('Distance Sensor:'+vOnOff);
+        
+        initCmdBuffer(SysCmdID); // System command
+
+        TxCmdBuffer[2] = SensorConfigID; // sensor config
+        TxCmdBuffer[3] = SensorDistanceID;
+
+        if(vOnOff == menus[lang]['onOff'][onOffTable['off']]) {TxCmdBuffer[4] = 0;}
+        else if(vOnOff == menus[lang]['onOff'][onOffTable['on']]) {TxCmdBuffer[4] = 1;}
+
+        TxCmdBuffer[5] = 0;
+        TxCmdBuffer[6] = 0;
+
+        extDevice.send(TxCmdBuffer.buffer);
+    };
+    
     ext.bodyMove = function(angularVelocity, linearVelocity) {
         // Code that gets executed when the block is run
 
@@ -524,7 +572,9 @@
               [' ', 'Sound, Emotion %m.soundGroup with volume %n', 'soundPlay','ok','80'],
               [' ', 'Sound, Effect %m.soundGroupExt with volume %n', 'soundPlayExt','airplane','80'],
               ['-'],
-              ['h', 'when TopButton Pressed', 'whenTopButtonPressed'],
+              [' ', 'Button Sensing %m.onOff', 'buttonSetEnable', 'off'],
+              [' ', 'Distance Sensing %m.onOff', 'distanceSetEnable', 'off'],
+              ['h', 'when Button Pressed', 'whenButtonPressed'],
               ['-']
             ],
             ko: [
@@ -544,7 +594,9 @@
               [' ', '소리, 느낌 %m.soundGroup , 음량 %n', 'soundPlay','좋아','80'],
               [' ', '소리, 효과음 %m.soundGroupExt , 음량 %n', 'soundPlayExt','비행기','80'],
               ['-'],
-              ['h', '큰 버튼을 누르면', 'whenTopButtonPressed'],
+              [' ', '버튼 감지 %m.onOff', 'buttonSetEnable', '끄기'],
+              [' ', '거리 감지 %m.onOff', 'distanceSetEnable', '끄기'],
+              ['h', '버튼을 누르면', 'whenButtonPressed'],
               ['-']
             ]
     };
