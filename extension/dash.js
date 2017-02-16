@@ -628,7 +628,7 @@
               [' ', 'Button Sensing %m.onOff', 'buttonSetEnable', 'Off'],
               [' ', 'Distance Sensing %m.onOff', 'distanceSetEnable', 'Off'],
               ['h', 'when %m.buttonSensorList Button Pressed', 'whenButtonPressed', 'Big'],
-              ['R', 'get Distance %m.distanceSensorList', 'getDistanceSensor', 'Back'],
+              ['r', 'get Distance %m.distanceSensorList', 'getDistanceSensor', 'Back'],
               ['-']
             ],
             ko: [
@@ -651,7 +651,7 @@
               [' ', '버튼 감지 %m.onOff', 'buttonSetEnable', '끄기'],
               [' ', '거리 감지 %m.onOff', 'distanceSetEnable', '끄기'],
               ['h', '%m.buttonSensorList 버튼을 누르면', 'whenButtonPressed', '큰 버튼'],
-              ['R', '%m.distanceSensorList 거리 감지', 'getDistanceSensor', '뒷면'],
+              ['r', '%m.distanceSensorList 거리 감지', 'getDistanceSensor', '뒷면'],
               ['-']
             ]
     };
