@@ -42,62 +42,115 @@
     };
     
     var colorTable = {
-        'red': 0,
-        'bright red': 1, 
-        'yellow': 2, 
-        'green': 3, 
-        'bright blue': 4,
-        'blue': 5, 
-        'magenta': 6,
-        'white': 7,
-        'off' : 8
+        'Red': 0,
+        'Bright Red': 1, 
+        'Yellow': 2, 
+        'Green': 3, 
+        'Bright Blue': 4,
+        'Blue': 5, 
+        'Magenta': 6,
+        'White': 7,
+        'Off' : 8
     };
     
     var dirTable = {
-        'forward': 0, 
-        'backward': 1, 
-        'left': 2, 
-        'right': 3
+        'Forward': 0, 
+        'Backward': 1, 
+        'Left': 2, 
+        'Right': 3
     };
     
     var lightLampRgbTable = {
-        'left ear': 0,
-        'right ear': 1,
-        'chest': 2,
+        'Left Ear': 0,
+        'Right Ear': 1,
+        'Chest': 2,
     }
     
     var lightLampTable = {
-        'tail': 0,
-        'top button': 1
+        'Tail': 0,
+        'Top Button': 1
     };
     
     var onOffTable = {
-        'off': 0,
-        'on': 1
+        'Off': 0,
+        'On': 1
     }
     
     var headPositionTable = {
-        'left' : 0,
-        'right' : 1,
-        'center' : 2,
-        'top' : 3,
-        'bottom' : 4
+        'Left' : 0,
+        'Right' : 1,
+        'Center' : 2,
+        'Top' : 3,
+        'Bottom' : 4
+    }
+
+    var buttonSensorTable = {
+        'Big' : 0,
+        '1' : 1,
+        '2' : 2,
+        '3' : 3
+    }
+
+    var distanceSensorTable = {
+        'Right Front' : 0,
+        'Left Front' : 1,
+        'Back' : 2
     }
 
     var TxCmdBuffer = new Uint8Array(8);
     
-    // Top button pressed
-    ext.whenButtonPressed = function () {
+    // button pressed
+    ext.whenButtonPressed = function (vButtonID) {
         if (!extDevice || !extDeviceOnline) return false;
         if (inputSensor[0] == SensorRes_Button) {
+            var ischecked = false;
             if(inputSensor[1] != 0) {
-                // TODO : check button mask
+                if(vButtonID == menus[lang]['buttonSensorList'][buttonSensorTable['Big']]) {
+                    if(inputSensor[1] & 0x10) ischecked = true;
+                }
+                else if(vButtonID == menus[lang]['buttonSensorList'][buttonSensorTable['1']]) {
+                    if(inputSensor[1] & 0x20) ischecked = true;
+                }
+                else if(vButtonID == menus[lang]['buttonSensorList'][buttonSensorTable['2']]) {
+                    if(inputSensor[1] & 0x40) ischecked = true;
+                }
+                else if(vButtonID == menus[lang]['buttonSensorList'][buttonSensorTable['3']]) {
+                    if(inputSensor[1] & 0x80) ischecked = true;
+                }
                 inputSensor[0] = 0;  // clear
                 inputSensor[1] = 0;  // clear
-                return true;
+
+                return ischecked;
             }
         }
         return false;
+    };
+   
+    // Distance Sensor Reported
+    ext.getDistanceSensor = function (vSensorID) {
+        if (!extDevice || !extDeviceOnline) return 0;
+        if (inputSensor[0] == SensorRes_Distance) {
+            var vReturnData = 0;
+            if(vSensorID == menus[lang]['distanceSensorList'][buttonSensorTable['Right Front']]) {
+                vReturnData = inputSensor[1];
+                if(vReturnData <= 3) vReturnData = 0;
+            }
+            else if(vSensorID == menus[lang]['distanceSensorList'][buttonSensorTable['Left Front']]) {
+                vReturnData = inputSensor[2];
+                if(vReturnData <= 3) vReturnData = 0;
+            }
+            else if(vSensorID == menus[lang]['distanceSensorList'][buttonSensorTable['Back']]) {
+                vReturnData = inputSensor[3];
+                if(vReturnData <= 5) vReturnData = 0;
+            }
+            inputSensor[0] = 0;  // clear
+            inputSensor[1] = 0;  // clear
+            inputSensor[2] = 0;  // clear
+            inputSensor[3] = 0;  // clear
+            console.log('Distance Sensor :'+ vSensorID + ' value:'+vReturnData);
+            return vReturnData;
+        }
+        return 0;
     };
    
     ext.buttonSetEnable = function(vOnOff) {
@@ -112,8 +165,8 @@
         TxCmdBuffer[2] = SensorConfigID; // sensor config
         TxCmdBuffer[3] = SensorButtonID;
 
-        if(vOnOff == menus[lang]['onOff'][onOffTable['off']]) {TxCmdBuffer[4] = 0;}
-        else if(vOnOff == menus[lang]['onOff'][onOffTable['on']]) {TxCmdBuffer[4] = 1;}
+        if(vOnOff == menus[lang]['onOff'][onOffTable['Off']]) {TxCmdBuffer[4] = 0;}
+        else if(vOnOff == menus[lang]['onOff'][onOffTable['On']]) {TxCmdBuffer[4] = 1;}
 
         TxCmdBuffer[5] = 0;
         TxCmdBuffer[6] = 0;
@@ -133,8 +186,8 @@
         TxCmdBuffer[2] = SensorConfigID; // sensor config
         TxCmdBuffer[3] = SensorDistanceID;
 
-        if(vOnOff == menus[lang]['onOff'][onOffTable['off']]) {TxCmdBuffer[4] = 0;}
-        else if(vOnOff == menus[lang]['onOff'][onOffTable['on']]) {TxCmdBuffer[4] = 1;}
+        if(vOnOff == menus[lang]['onOff'][onOffTable['Off']]) {TxCmdBuffer[4] = 0;}
+        else if(vOnOff == menus[lang]['onOff'][onOffTable['On']]) {TxCmdBuffer[4] = 1;}
 
         TxCmdBuffer[5] = 0;
         TxCmdBuffer[6] = 0;
@@ -174,10 +227,10 @@
 
         console.log('Rolling dir:'+dir+' linearVelocity:'+linearVelocity);
         
-        if(dir == menus[lang]['direction'][dirTable['forward']]) ext.bodyMove(0,linearVelocity);
-        else if(dir == menus[lang]['direction'][dirTable['backward']]) ext.bodyMove(0,linearVelocity);
-        else if(dir == menus[lang]['direction'][dirTable['left']]) ext.bodyMove(90,linearVelocity);
-        else if(dir == menus[lang]['direction'][dirTable['right']]) ext.bodyMove(-90,linearVelocity);
+        if(dir == menus[lang]['direction'][dirTable['Forward']]) ext.bodyMove(0,linearVelocity);
+        else if(dir == menus[lang]['direction'][dirTable['Backward']]) ext.bodyMove(0,linearVelocity);
+        else if(dir == menus[lang]['direction'][dirTable['Left']]) ext.bodyMove(90,linearVelocity);
+        else if(dir == menus[lang]['direction'][dirTable['Right']]) ext.bodyMove(-90,linearVelocity);
     };
     
     ext.stopMove = function() {
@@ -222,11 +275,11 @@
 
         console.log('Head View Position :'+viewDir);
         
-        if(viewDir == menus[lang]['headDirection'][headPositionTable['left']]) ext.headPosition(90,0);
-        else if(viewDir == menus[lang]['headDirection'][headPositionTable['right']]) ext.headPosition(-90,0);
-        else if(viewDir == menus[lang]['headDirection'][headPositionTable['top']]) ext.headPosition(0,-12);
-        else if(viewDir == menus[lang]['headDirection'][headPositionTable['bottom']]) ext.headPosition(0,7);
-        else if(viewDir == menus[lang]['headDirection'][headPositionTable['center']]) ext.headPosition(0,0);
+        if(viewDir == menus[lang]['headDirection'][headPositionTable['Left']]) ext.headPosition(90,0);
+        else if(viewDir == menus[lang]['headDirection'][headPositionTable['Right']]) ext.headPosition(-90,0);
+        else if(viewDir == menus[lang]['headDirection'][headPositionTable['Top']]) ext.headPosition(0,-12);
+        else if(viewDir == menus[lang]['headDirection'][headPositionTable['Bottom']]) ext.headPosition(0,7);
+        else if(viewDir == menus[lang]['headDirection'][headPositionTable['Center']]) ext.headPosition(0,0);
     };
 
     ext.light = function(vName, vColor) {
@@ -236,15 +289,15 @@
 
         console.log('LED name :'+vName + ' color:'+vColor);
 
-        if(vColor == menus[lang]['lightColor'][colorTable['red']]) {ext.lightRGB(vName,255,0,0);}
-        else if(vColor == menus[lang]['lightColor'][colorTable['bright red']]) {ext.lightRGB(vName,255,128,0);}
-        else if(vColor == menus[lang]['lightColor'][colorTable['yellow']]) {ext.lightRGB(vName,255,255,0);}
-        else if(vColor == menus[lang]['lightColor'][colorTable['green']]) {ext.lightRGB(vName,0,255,0);}
-        else if(vColor == menus[lang]['lightColor'][colorTable['bright blue']]) {ext.lightRGB(vName,0,128,255);}	
-        else if(vColor == menus[lang]['lightColor'][colorTable['blue']]) {ext.lightRGB(vName,0,0,255);}
-        else if(vColor == menus[lang]['lightColor'][colorTable['magenta']]) {ext.lightRGB(vName,255,0,255);}	
-        else if(vColor == menus[lang]['lightColor'][colorTable['white']]) {ext.lightRGB(vName,255,255,255);}
-        else if(vColor == menus[lang]['lightColor'][colorTable['off']]) {ext.lightRGB(vName,0,0,0);}
+        if(vColor == menus[lang]['lightColor'][colorTable['Red']]) {ext.lightRGB(vName,255,0,0);}
+        else if(vColor == menus[lang]['lightColor'][colorTable['Bright Red']]) {ext.lightRGB(vName,255,128,0);}
+        else if(vColor == menus[lang]['lightColor'][colorTable['Yellow']]) {ext.lightRGB(vName,255,255,0);}
+        else if(vColor == menus[lang]['lightColor'][colorTable['Green']]) {ext.lightRGB(vName,0,255,0);}
+        else if(vColor == menus[lang]['lightColor'][colorTable['Bright Blue']]) {ext.lightRGB(vName,0,128,255);}	
+        else if(vColor == menus[lang]['lightColor'][colorTable['Blue']]) {ext.lightRGB(vName,0,0,255);}
+        else if(vColor == menus[lang]['lightColor'][colorTable['Magenta']]) {ext.lightRGB(vName,255,0,255);}	
+        else if(vColor == menus[lang]['lightColor'][colorTable['White']]) {ext.lightRGB(vName,255,255,255);}
+        else if(vColor == menus[lang]['lightColor'][colorTable['Off']]) {ext.lightRGB(vName,0,0,0);}
     };
 
     ext.lightRGB = function(vName, vRed,vGreen,vBlue) {
@@ -260,9 +313,9 @@
         if(vGreen>255) vGreen=255; if(vGreen < 0) vGreen = 0;
         if(vBlue>255) vBlue=255; if(vBlue < 0) vBlue = 0;
         
-        if(vName == menus[lang]['ledName'][lightLampRgbTable['left ear']]) {TxCmdBuffer[2] =LeftEarLampID;}
-        else if(vName == menus[lang]['ledName'][lightLampRgbTable['right ear']]) {TxCmdBuffer[2] = RightEarLampID;}
-        else if(vName == menus[lang]['ledName'][lightLampRgbTable['chest']]) {TxCmdBuffer[2] = ChestLampID;}
+        if(vName == menus[lang]['ledName'][lightLampRgbTable['Left Ear']]) {TxCmdBuffer[2] =LeftEarLampID;}
+        else if(vName == menus[lang]['ledName'][lightLampRgbTable['Right Ear']]) {TxCmdBuffer[2] = RightEarLampID;}
+        else if(vName == menus[lang]['ledName'][lightLampRgbTable['Chest']]) {TxCmdBuffer[2] = ChestLampID;}
  
         TxCmdBuffer[3] = vRed;
         TxCmdBuffer[4] = vGreen;
@@ -283,8 +336,8 @@
         
         if(vBrightness>255) vBrightness=255; if(vBrightness<0) vBrightness=0;
         
-        if(vName == menus[lang]['lampName'][lightLampTable['tail']]) {TxCmdBuffer[2] = TailLampID;}
-        else if(vName == menus[lang]['lampName'][lightLampTable['top button']]) {TxCmdBuffer[2] = TopButtonLampID; }
+        if(vName == menus[lang]['lampName'][lightLampTable['Tail']]) {TxCmdBuffer[2] = TailLampID;}
+        else if(vName == menus[lang]['lampName'][lightLampTable['Top Button']]) {TxCmdBuffer[2] = TopButtonLampID; }
 
         TxCmdBuffer[3] = 0;
         TxCmdBuffer[4] = 0;
@@ -309,8 +362,8 @@
         TxCmdBuffer[4] = 0;
         TxCmdBuffer[5] = menus[lang]['eyeLamp'].indexOf(vEyesLampID) + 1;
 
-        if(vOnOff == menus[lang]['onOff'][onOffTable['off']]) {TxCmdBuffer[6] = 0;}
-        else if(vOnOff == menus[lang]['onOff'][onOffTable['on']]) {TxCmdBuffer[6] = 255;}
+        if(vOnOff == menus[lang]['onOff'][onOffTable['Off']]) {TxCmdBuffer[6] = 0;}
+        else if(vOnOff == menus[lang]['onOff'][onOffTable['On']]) {TxCmdBuffer[6] = 255;}
 
         extDevice.send(TxCmdBuffer.buffer);
     };
@@ -331,8 +384,8 @@
         TxCmdBuffer[4] = getByte_Low(vDec);
         TxCmdBuffer[5] = 0;
 
-        if(vOnOff == menus[lang]['onOff'][onOffTable['off']]) {TxCmdBuffer[6] = 0;}
-        else if(vOnOff == menus[lang]['onOff'][onOffTable['on']]) {TxCmdBuffer[6] = 255;}
+        if(vOnOff == menus[lang]['onOff'][onOffTable['Off']]) {TxCmdBuffer[6] = 0;}
+        else if(vOnOff == menus[lang]['onOff'][onOffTable['On']]) {TxCmdBuffer[6] = 255;}
 
         extDevice.send(TxCmdBuffer.buffer);
     };
@@ -557,24 +610,25 @@
             // 'h' 	Hat block (synchronous, returns boolean, true = run stack)
             en: [
               [' ', 'Moving, Angular %n degrees/sec, Linear %n cm/sec', 'bodyMove', '0', '20'],
-              [' ', 'Moving, %m.direction , Linear %n cm/sec', 'bodyMoveDir', 'forward', '20'],
+              [' ', 'Moving, %m.direction , Linear %n cm/sec', 'bodyMoveDir', 'Forward', '20'],
               [' ', 'Stop Move','stopMove'],
               ['-'],
-              [' ', 'Head position to %m.headDirection', 'headViewPosition','center'],
+              [' ', 'Head position to %m.headDirection', 'headViewPosition','Center'],
               [' ', 'Head position to Horizontal %n , Vertical %n degrees', 'headPosition','0','0'],
               ['-'],
-              [' ', 'Color %m.ledName to %m.lightColor', 'light', 'chest', 'red'],
-              [' ', 'Color %m.ledName with Red:%n Green:%n Blue:%n', 'lightRGB', 'chest', '255', '0', '0'],
-              [' ', 'Lamp %m.lampName with Brightness:%n', 'lightLamp', 'top button','255'],
-              [' ', 'Eye Lamp #%m.eyeLamp %m.onOff', 'lightEyes', '1', 'on'],
-              [' ', 'Eye Lamp Pattern 0x%n for %m.onOff', 'lightEyesMask', '0FFF', 'on'],
+              [' ', 'Color %m.ledName to %m.lightColor', 'light', 'Chest', 'Red'],
+              [' ', 'Color %m.ledName with Red:%n Green:%n Blue:%n', 'lightRGB', 'Chest', '255', '0', '0'],
+              [' ', 'Lamp %m.lampName with Brightness:%n', 'lightLamp', 'Top Button','255'],
+              [' ', 'Eye Lamp #%m.eyeLamp %m.onOff', 'lightEyes', '1', 'On'],
+              [' ', 'Eye Lamp Pattern 0x%n for %m.onOff', 'lightEyesMask', '0FFF', 'On'],
               ['-'],
-              [' ', 'Sound, Emotion %m.soundGroup with volume %n', 'soundPlay','ok','80'],
-              [' ', 'Sound, Effect %m.soundGroupExt with volume %n', 'soundPlayExt','airplane','80'],
+              [' ', 'Sound, Emotion %m.soundGroup with volume %n', 'soundPlay','Ok','80'],
+              [' ', 'Sound, Effect %m.soundGroupExt with volume %n', 'soundPlayExt','Airplane','80'],
               ['-'],
-              [' ', 'Button Sensing %m.onOff', 'buttonSetEnable', 'off'],
-              [' ', 'Distance Sensing %m.onOff', 'distanceSetEnable', 'off'],
-              ['h', 'when Button Pressed', 'whenButtonPressed'],
+              [' ', 'Button Sensing %m.onOff', 'buttonSetEnable', 'Off'],
+              [' ', 'Distance Sensing %m.onOff', 'distanceSetEnable', 'Off'],
+              ['h', 'when %m.buttonSensorList Button Pressed', 'whenButtonPressed', 'Big'],
+              ['R', 'get Distance %m.distanceSensorList', 'getDistanceSensor', 'Back'],
               ['-']
             ],
             ko: [
@@ -596,22 +650,25 @@
               ['-'],
               [' ', '버튼 감지 %m.onOff', 'buttonSetEnable', '끄기'],
               [' ', '거리 감지 %m.onOff', 'distanceSetEnable', '끄기'],
-              ['h', '버튼을 누르면', 'whenButtonPressed'],
+              ['h', '%m.buttonSensorList 버튼을 누르면', 'whenButtonPressed', '큰 버튼'],
+              ['R', '%m.distanceSensorList 거리 감지', 'getDistanceSensor', '뒷면'],
               ['-']
             ]
     };
 
     var menus = {
           en: {
-            direction: ['forward', 'backward', 'left', 'right'],
-            headDirection: ['left','right','center','top','bottom'],
-            lightColor: ['red', 'bright red', 'yellow', 'green', 'bright blue', 'blue', 'magenta','white','off'],
-            ledName: ['left ear', 'right ear', 'chest'],
-            lampName: ['tail', 'top button'],
+            direction: ['Forward', 'Backward', 'Left', 'Right'],
+            headDirection: ['Left','Right','Center','Top','Bottom'],
+            lightColor: ['Red', 'Bright Red', 'Yellow', 'Green', 'Bright Blue', 'Blue', 'Magenta','White','Off'],
+            ledName: ['Left Ear', 'Right Ear', 'Chest'],
+            lampName: ['Tail', 'Top Button'],
             eyeLamp: ['1','2','3','4','5','6','7','8','9','10','11','12'],
-            soundGroup:['ok','bye','sigh','bragging','confused','cool','huh','hi','wah','wow','wee','woohoo','haha','ooh','grunt','lets go','tah dah','snoring','surprised','weehee','uh huh','uh oh','yawn','yippe'],
-            soundGroupExt:['airplane','bot cute','crocodile','dinosaur','elephant','engine rev','goat','cat','dog','lion','gobble','helicopter','horse','squeak1','squeak2','short boost','tire squeal','train','truck horn','lip trumpet','tugboat','lip buzz','siren'],
-            onOff: ['off','on']
+            soundGroup:['Ok','Bye','Sigh','Bragging','Confused','Cool','Huh','Hi','Wah','Wow','Wee','Woohoo','Haha','Ooh','Grunt','Lets Go','Tah Dah','Snoring','Surprised','Weehee','Uh huh','Uh oh','Yawn','Yippe'],
+            soundGroupExt:['Airplane','Bot Cute','Crocodile','Dinosaur','Elephant','Engine Rev','Goat','Cat','Dog','Lion','Gobble','Helicopter','Horse','Squeak1','Squeak2','Short Boost','Tire Squeal','Train','Truck Horn','Lip Trumpet','Tugboat','Lip buzz','Siren'],
+            buttonSensorList:['Big','1','2','3'],
+            distanceSensorList:['Right Front','Left Front','Back'],
+            onOff: ['Off','On']
           },
           ko: {
             direction: ['앞으로', '뒤로', '왼쪽', '오른쪽'],
@@ -622,6 +679,8 @@
             eyeLamp: ['1','2','3','4','5','6','7','8','9','10','11','12'],
             soundGroup:['좋아','잘가','하아','랄라랄라','정신차려','멋진걸','으음','안녕','어어','와우','아아','유후','하하히히','우우','으라차','출발','짜쟌','그르릉','우우우','랄랄라','예우후','어-어','하품','야호'],
             soundGroupExt:['비행기','귀여운 로봇','악어','공룡','코끼리','엔진 회전','염소','고양이','개','사자','칠면조','헬리콥터','말','찍찍1','찍찍2','발사','타이어 소리','기차 경적','트럭 경적','트럼펫 흉내','뱃고동','부르릉 흉내','사이렌'],
+            buttonSensorList:['큰 버튼','1','2','3'],
+            distanceSensorList:['오른쪽 정면','왼쪽 정면','뒷면'],
             onOff: ['끄기','켜기']
           }
     };
