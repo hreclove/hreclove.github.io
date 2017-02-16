@@ -433,6 +433,7 @@
             // 'r' 	Synchronous reporter
             // 'R' 	Asynchronous reporter
             // 'h' 	Hat block (synchronous, returns boolean, true = run stack)
+            // 'b'      Boolean reporter (like  'r'  but returns only  true  or  false ) 
             en: [
               [' ', 'Roll to %n degrees, speed %n', 'roll', '0', '50'],
               [' ', 'Roll to %m.direction , speed %n', 'rollDir', 'forward', '50'],

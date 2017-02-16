@@ -126,6 +126,32 @@
         return false;
     };
    
+    // button pressed status
+    ext.getButtonSensor = function (vButtonID) {
+        if (!extDevice || !extDeviceOnline) return false;
+        if (inputSensor[0] == SensorRes_Button) {
+            var ischecked = false;
+            if(inputSensor[1] != 0) {
+                if(vButtonID == menus[lang]['buttonSensorList'][buttonSensorTable['Big']]) {
+                    if(inputSensor[1] & 0x10) ischecked = true;
+                }
+                else if(vButtonID == menus[lang]['buttonSensorList'][buttonSensorTable['1']]) {
+                    if(inputSensor[1] & 0x20) ischecked = true;
+                }
+                else if(vButtonID == menus[lang]['buttonSensorList'][buttonSensorTable['2']]) {
+                    if(inputSensor[1] & 0x40) ischecked = true;
+                }
+                else if(vButtonID == menus[lang]['buttonSensorList'][buttonSensorTable['3']]) {
+                    if(inputSensor[1] & 0x80) ischecked = true;
+                }
+                //inputSensor[0] = 0;  // clear
+                //inputSensor[1] = 0;  // clear
+                return ischecked;
+            }
+        }
+        return false;
+    };
+    
     // Distance Sensor Reported
     ext.getDistanceSensor = function (vSensorID) {
         if (!extDevice || !extDeviceOnline) return 0;
@@ -143,10 +169,10 @@
                 vReturnData = inputSensor[3];
                 if(vReturnData <= 5) vReturnData = 0;
             }
-            inputSensor[0] = 0;  // clear
-            inputSensor[1] = 0;  // clear
-            inputSensor[2] = 0;  // clear
-            inputSensor[3] = 0;  // clear
+            //inputSensor[0] = 0;  // clear
+            //inputSensor[1] = 0;  // clear
+            //inputSensor[2] = 0;  // clear
+            //inputSensor[3] = 0;  // clear
             console.log('Distance Sensor :'+ vSensorID + ' value:'+vReturnData);
             return vReturnData;
         }
@@ -608,6 +634,7 @@
             // 'r' 	Synchronous reporter
             // 'R' 	Asynchronous reporter
             // 'h' 	Hat block (synchronous, returns boolean, true = run stack)
+            // 'b'      Boolean reporter (like  'r'  but returns only  true  or  false ) 
             en: [
               [' ', 'Moving, Angular %n degrees/sec, Linear %n cm/sec', 'bodyMove', '0', '20'],
               [' ', 'Moving, %m.direction , Linear %n cm/sec', 'bodyMoveDir', 'Forward', '20'],
@@ -628,6 +655,7 @@
               [' ', 'Button Sensing %m.onOff', 'buttonSetEnable', 'Off'],
               [' ', 'Distance Sensing %m.onOff', 'distanceSetEnable', 'Off'],
               ['h', 'when %m.buttonSensorList Button Pressed', 'whenButtonPressed', 'Big'],
+              ['b', 'get Button %m.buttonSensorList', 'getButtonSensor', 'Big'],
               ['r', 'get Distance %m.distanceSensorList', 'getDistanceSensor', 'Back'],
               ['-']
             ],
@@ -651,6 +679,7 @@
               [' ', '버튼 감지 %m.onOff', 'buttonSetEnable', '끄기'],
               [' ', '거리 감지 %m.onOff', 'distanceSetEnable', '끄기'],
               ['h', '%m.buttonSensorList 버튼을 누르면', 'whenButtonPressed', '큰 버튼'],
+              ['b', '%m.buttonSensorList 버튼 감지', 'getButtonPressed', '큰 버튼'],
               ['r', '%m.distanceSensorList 거리 감지', 'getDistanceSensor', '뒷면'],
               ['-']
             ]
@@ -684,12 +713,17 @@
             onOff: ['끄기','켜기']
           }
     };
+    
+    var urls = {
+       en: 'http://hreclove.github.io/extension/en/dash/',
+       ko: 'http://hreclove.github.io/extension/ko/dash/'
+    };
   
     // Block and block menu descriptions
     var descriptor = {
         blocks: blocks[lang],
         menus: menus[lang],
-        url: 'http://hreclove.github.io/extension/dash/'
+        url: urls[lang]
     };
 
     // Register the extension
