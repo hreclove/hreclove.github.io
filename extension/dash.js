@@ -679,7 +679,7 @@
               [' ', '버튼 감지 %m.onOff', 'buttonSetEnable', '끄기'],
               [' ', '거리 감지 %m.onOff', 'distanceSetEnable', '끄기'],
               ['h', '%m.buttonSensorList 버튼을 누르면', 'whenButtonPressed', '큰 버튼'],
-              ['b', '%m.buttonSensorList 버튼 감지', 'getButtonPressed', '큰 버튼'],
+              ['b', '%m.buttonSensorList 버튼 감지', 'getButtonSensor', '큰 버튼'],
               ['r', '%m.distanceSensorList 거리 감지', 'getDistanceSensor', '뒷면'],
               ['-']
             ]
