@@ -386,7 +386,10 @@
         TxCmdBuffer[2] = EyesLampID; // which lamp
         TxCmdBuffer[3] = 0;
         TxCmdBuffer[4] = 0;
+
+        // set to Watch fact Direction
         TxCmdBuffer[5] = menus[lang]['eyeLamp'].indexOf(vEyesLampID) + 1;
+        if(TxCmdBuffer[5] == 12) TxCmdBuffer[5] = 0;
 
         if(vOnOff == menus[lang]['onOff'][onOffTable['Off']]) {TxCmdBuffer[6] = 0;}
         else if(vOnOff == menus[lang]['onOff'][onOffTable['On']]) {TxCmdBuffer[6] = 255;}
