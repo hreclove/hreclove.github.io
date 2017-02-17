@@ -397,6 +397,32 @@
         extDevice.send(TxCmdBuffer.buffer);
     };
     
+    ext.lightEyesNumber = function(vEyesLampID, vOnOff) {
+        // Code that gets executed when the block is run
+
+        if(!extDevice  || !extDeviceOnline) return;
+
+        console.log('Eyes Number'+vEyesLampID+' value:'+vOnOff);
+                      
+        initCmdBuffer(LedCmdID); // LED command
+
+        if(vEyesLampID > 12) vEyesLampID = 12;
+        else if(vEyesLampID < 1) vEyesLampID = 1;
+
+        TxCmdBuffer[2] = EyesLampID; // which lamp
+        TxCmdBuffer[3] = 0xF0;   // to set as MaskValueNull
+        TxCmdBuffer[4] = 0x00;
+
+        // set to Watch fact Direction
+        TxCmdBuffer[5] = vEyesLampID;
+        if(TxCmdBuffer[5] == 12) TxCmdBuffer[5] = 0;
+
+        if(vOnOff > 255) vOnOff = 255;
+        else if(vOnOff < 0) vOnOff = 0;
+        TxCmdBuffer[6] = vOnOff;
+
+        extDevice.send(TxCmdBuffer.buffer);
+    };
 
     ext.lightEyesMask = function(vHexMask, vBrightness) {
         // Code that gets executed when the block is run
@@ -649,17 +675,19 @@
               [' ', 'Color %m.ledName to %m.lightColor', 'light', 'Chest', 'Red'],
               [' ', 'Color %m.ledName with Red:%n Green:%n Blue:%n', 'lightRGB', 'Chest', '255', '0', '0'],
               [' ', 'Lamp %m.lampName with Brightness:%n', 'lightLamp', 'Top Button','255'],
+              ['-'],
               [' ', 'Eye Lamp Set as Pattern 0x%n with Brightness:%n', 'lightEyesMask', '0FFF', '255'],
               [' ', 'Eye Lamp Control, #%m.eyeLamp %m.onOff', 'lightEyes', '12', 'On'],
+              [' ', 'Eye Lamp Control, #%n value %n', 'lightEyesNumber', '12', '255'],
               ['-'],
               [' ', 'Sound, Emotion %m.soundGroup with volume %n', 'soundPlay','Ok','80'],
               [' ', 'Sound, Effect %m.soundGroupExt with volume %n', 'soundPlayExt','Airplane','80'],
               ['-'],
               [' ', 'Button Sensing %m.onOff', 'buttonSetEnable', 'Off'],
               [' ', 'Distance Sensing %m.onOff', 'distanceSetEnable', 'Off'],
-              ['h', 'when %m.buttonSensorList Button Pressed', 'whenButtonPressed', 'Big'],
               ['b', 'get Button %m.buttonSensorList', 'getButtonSensor', 'Big'],
               ['r', 'get Distance %m.distanceSensorList', 'getDistanceSensor', 'Back'],
+              ['h', 'when %m.buttonSensorList Button Pressed', 'whenButtonPressed', 'Big'],
               ['-']
             ],
             ko: [
@@ -673,17 +701,19 @@
               [' ', '색 바꾸기,%m.ledName %m.lightColor', 'light', '가슴', '빨강'],
               [' ', '색 바꾸기,%m.ledName 빨강:%n 초록:%n 파랑:%n', 'lightRGB', '가슴', '255', '0', '0'],
               [' ', '램프 %m.lampName 밝기:%n', 'lightLamp', '큰 버튼','255'],
+              ['-'],
               [' ', '눈 조명 설정, 모양값 0x%n 밝기:%n', 'lightEyesMask', '0FFF', '255'],
-              [' ', '눈 조명 제어 #%m.eyeLamp %m.onOff', 'lightEyes', '12', '켜기'],
+              [' ', '눈 조명 제어, #%m.eyeLamp %m.onOff', 'lightEyes', '12', '켜기'],
+              [' ', '눈 조명 제어, #%n 값 %n', 'lightEyesNumber', '12', '255'],
               ['-'],
               [' ', '소리, 느낌 %m.soundGroup , 음량 %n', 'soundPlay','좋아','80'],
               [' ', '소리, 효과음 %m.soundGroupExt , 음량 %n', 'soundPlayExt','비행기','80'],
               ['-'],
               [' ', '버튼 감지 %m.onOff', 'buttonSetEnable', '끄기'],
               [' ', '거리 감지 %m.onOff', 'distanceSetEnable', '끄기'],
-              ['h', '%m.buttonSensorList 버튼을 누르면', 'whenButtonPressed', '큰 버튼'],
               ['b', '%m.buttonSensorList 버튼 감지', 'getButtonSensor', '큰 버튼'],
               ['r', '%m.distanceSensorList 거리 감지', 'getDistanceSensor', '뒷면'],
+              ['h', '%m.buttonSensorList 버튼을 누르면', 'whenButtonPressed', '큰 버튼'],
               ['-']
             ]
     };
