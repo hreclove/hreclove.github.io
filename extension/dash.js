@@ -384,8 +384,8 @@
         initCmdBuffer(LedCmdID); // LED command
 
         TxCmdBuffer[2] = EyesLampID; // which lamp
-        TxCmdBuffer[3] = 0;
-        TxCmdBuffer[4] = 0;
+        TxCmdBuffer[3] = 0xF0;   // to set as MaskValueNull
+        TxCmdBuffer[4] = 0x00;
 
         // set to Watch fact Direction
         TxCmdBuffer[5] = menus[lang]['eyeLamp'].indexOf(vEyesLampID) + 1;
@@ -398,13 +398,13 @@
     };
     
 
-    ext.lightEyesMask = function(vHexMask, vOnOff) {
+    ext.lightEyesMask = function(vHexMask, vBrightness) {
         // Code that gets executed when the block is run
 
         if(!extDevice  || !extDeviceOnline) return;
         
         var vDec = parseInt(vHexMask,16);
-        console.log('Eyes Mask:'+vHexMask+' dec='+vDec);
+        console.log('Eyes Mask:'+vHexMask+' dec='+vDec+' Brightness:'+vBrightness);
                       
         initCmdBuffer(LedCmdID); // LED command
 
@@ -413,8 +413,8 @@
         TxCmdBuffer[4] = getByte_Low(vDec);
         TxCmdBuffer[5] = 0;
 
-        if(vOnOff == menus[lang]['onOff'][onOffTable['Off']]) {TxCmdBuffer[6] = 0;}
-        else if(vOnOff == menus[lang]['onOff'][onOffTable['On']]) {TxCmdBuffer[6] = 255;}
+        if(vBrightness > 255) vBrightness = 255;
+        TxCmdBuffer[6] = vBrightness;
 
         extDevice.send(TxCmdBuffer.buffer);
     };
@@ -650,7 +650,7 @@
               [' ', 'Color %m.ledName with Red:%n Green:%n Blue:%n', 'lightRGB', 'Chest', '255', '0', '0'],
               [' ', 'Lamp %m.lampName with Brightness:%n', 'lightLamp', 'Top Button','255'],
               [' ', 'Eye Lamp #%m.eyeLamp %m.onOff', 'lightEyes', '1', 'On'],
-              [' ', 'Eye Lamp Pattern 0x%n for %m.onOff', 'lightEyesMask', '0FFF', 'On'],
+              [' ', 'Eye Lamp Pattern 0x%n with Brightness:%n', 'lightEyesMask', '0FFF', '255'],
               ['-'],
               [' ', 'Sound, Emotion %m.soundGroup with volume %n', 'soundPlay','Ok','80'],
               [' ', 'Sound, Effect %m.soundGroupExt with volume %n', 'soundPlayExt','Airplane','80'],
@@ -674,7 +674,7 @@
               [' ', '색 바꾸기,%m.ledName 빨강:%n 초록:%n 파랑:%n', 'lightRGB', '가슴', '255', '0', '0'],
               [' ', '램프 %m.lampName 밝기:%n', 'lightLamp', '큰 버튼','255'],
               [' ', '눈 조명 #%m.eyeLamp %m.onOff', 'lightEyes', '1', '켜기'],
-              [' ', '눈 조명, 모양값 0x%n 으로 %m.onOff', 'lightEyesMask', '0FFF', '켜기'],
+              [' ', '눈 조명, 모양값 0x%n 밝기:%n', 'lightEyesMask', '0FFF', '255'],
               ['-'],
               [' ', '소리, 느낌 %m.soundGroup , 음량 %n', 'soundPlay','좋아','80'],
               [' ', '소리, 효과음 %m.soundGroupExt , 음량 %n', 'soundPlayExt','비행기','80'],
