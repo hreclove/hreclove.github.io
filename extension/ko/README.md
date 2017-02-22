@@ -1,1 +1,1 @@
-한국어 도움말 페이지.
+Korean Help page.
