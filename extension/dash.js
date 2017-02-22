@@ -254,7 +254,7 @@
         console.log('Rolling dir:'+dir+' linearVelocity:'+linearVelocity);
         
         if(dir == menus[lang]['direction'][dirTable['Forward']]) ext.bodyMove(0,linearVelocity);
-        else if(dir == menus[lang]['direction'][dirTable['Backward']]) ext.bodyMove(0,linearVelocity);
+        else if(dir == menus[lang]['direction'][dirTable['Backward']]) ext.bodyMove(0,-linearVelocity);
         else if(dir == menus[lang]['direction'][dirTable['Left']]) ext.bodyMove(90,linearVelocity);
         else if(dir == menus[lang]['direction'][dirTable['Right']]) ext.bodyMove(-90,linearVelocity);
     };
