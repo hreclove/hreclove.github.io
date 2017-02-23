@@ -484,12 +484,17 @@
             aimingAngle: ['5','10','15','30','45']
           }
     };
+    
+    var urls = {
+       en: 'http://hreclove.github.io/extension/en/sprk/',
+       ko: 'http://hreclove.github.io/extension/ko/sprk/'
+    };
   
     // Block and block menu descriptions
     var descriptor = {
         blocks: blocks[lang],
         menus: menus[lang],
-        url: 'http://hreclove.github.io/extension/sprk/'
+        url: urls[lang]
     };
 
     // Register the extension
